@@ -269,7 +269,10 @@
 
 
     
-    <script>
+<script>
+        // --- [추가] 시뮬레이션 실행 상태 추적 변수 ---
+        let isSimulationStarted = false; 
+
         // 1. 유틸리티 함수
         function safeNum(v) { return Number(v.toString().replace(/[^0-9.-]+/g, "")) || 0; }
         function addRow() { 
@@ -279,7 +282,11 @@
             container.appendChild(newRow);
         }
         function removeRow(btn) { 
-            if(document.querySelectorAll('.asset-row').length > 1) { btn.closest('.asset-row').remove(); }
+            if(document.querySelectorAll('.asset-row').length > 1) { 
+                btn.closest('.asset-row').remove(); 
+                // [추가] 행이 삭제될 때도 실시간으로 재계산 반영
+                if (isSimulationStarted) calculate(); 
+            }
         }
 
         // 실시간 기준표 업데이트 함수 (버튼 안 눌러도 즉시 작동)
@@ -344,6 +351,9 @@
 
         // 4. 메인 시뮬레이션 엔진
         function calculate() {
+            // [추가] 시뮬레이션 버튼이 한 번이라도 눌렸음을 기록
+            isSimulationStarted = true; 
+
             // 결과창 멋지게 등장
             const resArea = document.getElementById('result-area');
             resArea.classList.remove('reveal-hidden');
@@ -467,6 +477,21 @@
             renderCard('res-wife', '👩 아내', summary.wife, 'pink');
             renderCard('res-household', '🏠 가계 통합', summary.household, 'slate');
         }
+
+        // --- [추가] 이벤트 위임(Event Delegation)을 통한 실시간 자동 계산 ---
+        // 사용자가 input, select, checkbox, radio 등 값을 변경할 때마다 감지
+        document.addEventListener('input', function(e) {
+            // 시뮬레이션이 시작된 상태에서만 동작하도록 제한
+            if (isSimulationStarted && (e.target.tagName === 'INPUT' || e.target.tagName === 'SELECT')) {
+                calculate();
+            }
+        });
+
+        document.addEventListener('change', function(e) {
+            if (isSimulationStarted && (e.target.tagName === 'INPUT' || e.target.tagName === 'SELECT')) {
+                calculate();
+            }
+        });
     </script>
 </body>
 </html>
