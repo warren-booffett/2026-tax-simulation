@@ -416,7 +416,7 @@
 
                 detailHTML += `<div class='mb-12'><h3 class='text-xl font-black mb-4 border-l-4 border-blue-600 pl-3'>👤 ${owner==='husband'?'남편 명의':'아내 명의'} 상세 명세</h3>`;
                 
-                ['curr', 'past', 'futr'].forEach(scen => {
+['curr', 'past', 'futr'].forEach(scen => {
                     const c = sVars[scen];
                     const is1H = (isMarried ? rows.length === 1 : oA.length === 1);
                     let ptTotal = 0, ptPureSum = 0, ptBaseSum = 0, gaSum = 0, ptRowHTML = '';
@@ -447,18 +447,20 @@
                     let jbBase = Math.max(0, (gaSum - ex) * c.jbRatio);
                     
                     let hvyType = c.ratesGen;
-                    if (scen === 'curr') hvyType = (rows.length >= 3 && jbBase > 120000) ? c.ratesHvy : c.ratesGen;
-                    else if (scen === 'past') hvyType = (rows.length >= 3 || (rows.length >= 2 && rows.some(r=>r.querySelector('.p-reg').value==='Y'))) ? c.ratesHvy : c.ratesGen;
+                    let isHeavy = false;
+                    if (scen === 'curr') { hvyType = (rows.length >= 3 && jbBase > 120000) ? c.ratesHvy : c.ratesGen; isHeavy = (rows.length >= 3 && jbBase > 120000); }
+                    else if (scen === 'past') { hvyType = (rows.length >= 3 || (rows.length >= 2 && rows.some(r=>r.querySelector('.p-reg').value==='Y'))) ? c.ratesHvy : c.ratesGen; isHeavy = (hvyType === c.ratesHvy); }
                     else {
                         if (hLogic.includes('비거주')) hvyType = (rows.length >= 2 || rows.some(r=>r.querySelector('.p-res').value==='N')) ? c.ratesHvy : c.ratesGen;
                         else if (hLogic.includes('조정지역')) hvyType = (rows.length >= 2 && rows.some(r=>r.querySelector('.p-reg').value==='Y')) ? c.ratesHvy : c.ratesGen;
                         else if (hLogic.includes('2주택')) hvyType = rows.length >= 2 ? c.ratesHvy : c.ratesGen;
                         else hvyType = rows.length >= 3 ? c.ratesHvy : c.ratesGen;
+                        isHeavy = (hvyType === c.ratesHvy);
                     }
 
                     const jbR = getJB(jbBase, hvyType);
                     const dup = jbBase > 0 ? ptPureSum * ((gaSum - ex)*0.6 / ptBaseSum) : 0;
-                    let netJb = Math.max(0, jbR.base_tax - dup);
+                    let taxBeforeCredit = Math.max(0, jbR.base_tax - dup);
 
                     let cTxt = "-"; let cAmt = 0;
                     if (is1H && jbBase > 0) {
@@ -467,11 +469,15 @@
                         let ageC = ages[owner] >= 70 ? 0.4 : (ages[owner] >= 65 ? 0.3 : (ages[owner] >= 60 ? 0.2 : 0));
                         let holdC = holdY >= 15 ? 0.5 : (holdY >= 10 ? 0.4 : (holdY >= 5 ? 0.2 : 0));
                         let tR = Math.min(c.creditMax, ageC + holdC); 
-                        if (tR > 0) { cAmt = netJb * tR; netJb -= cAmt; cTxt = `<span class="info-badge">-${Math.round(tR*100)}%</span><br><span class="text-[0.55rem] text-slate-400">보유${holdY}년/연령합산</span>`; } 
+                        if (tR > 0) { cAmt = taxBeforeCredit * tR; cTxt = `<span class="info-badge">-${Math.round(tR*100)}%</span><br><span class="text-[0.55rem] text-slate-400">보유${holdY}년/연령합산</span>`; } 
                         else { cTxt = `<span class="text-[0.6rem] text-slate-400">적용불가<br>(보유${holdY}년/${ages[owner]}세)</span>`; }
                     } else if (!is1H && jbBase > 0) { cTxt = `<span class="text-[0.6rem] text-slate-400">다주택 배제</span>`; }
 
-                    const finalJb = netJb * 1.2;
+                    // 농특세 및 최종 금액 분리 산출
+                    let netJbAfterCredit = Math.max(0, taxBeforeCredit - cAmt);
+                    let nongTeukTax = netJbAfterCredit * 0.2;
+                    let finalJb = netJbAfterCredit + nongTeukTax;
+
                     summary[owner][scen] = ptTotal + finalJb; summary[owner][scen+'_pt'] = ptTotal; summary[owner][scen+'_jb'] = finalJb;
                     
                     if(!summary.household[scen]) { summary.household[scen]=0; summary.household[scen+'_pt']=0; summary.household[scen+'_jb']=0; }
@@ -483,27 +489,40 @@
                         <h4 class='font-black text-md mb-4'>${sTitle}</h4>
                         <h5 class='text-xs font-black text-slate-500 mb-2'>① 재산세 3단 분리 산출 (물건별)</h5>
                         <div class='table-wrapper mb-6'><table class='criteria-table'><thead class='bg-slate-50'><tr><th>자산명</th><th>조정공시가</th><th>재산과표</th><th>재산본세</th><th>지방교육세</th><th>도시지역분</th><th>재산세합계</th></tr></thead><tbody>${ptRowHTML}</tbody></table></div>
-                        <h5 class='text-xs font-black text-slate-500 mb-2'>② 종합부동산세 역산 차감 (인별 합산)</h5>
-                        <div class='table-wrapper mb-4'><table class='criteria-table'><thead class='bg-slate-50'><tr><th>합산 공시가</th><th>공제액</th><th>종부과표</th><th>세율</th><th>종부본세</th><th>재산세차감</th><th>세액공제</th><th>최종 종부세(농특포함)</th></tr></thead><tbody><tr><td>${Math.round(gaSum).toLocaleString()}만</td><td class='text-red-500 font-bold'>-${ex.toLocaleString()}만</td><td>${Math.round(jbBase).toLocaleString()}만<br><span class='formula-text'>FMVR ${Math.round(c.jbRatio*100)}%</span></td><td>${jbR.rate}</td><td>${Math.round(jbR.base_tax).toLocaleString()}만</td><td class='text-blue-500 font-bold'>-${Math.round(dup).toLocaleString()}만</td><td>${cTxt}<br>${cAmt>0?'-'+Math.round(cAmt).toLocaleString()+'만':''}</td><td class='total-highlight text-red-600'>${Math.round(finalJb).toLocaleString()}만</td></tr></tbody></table></div>
-                        <div class="text-right bg-slate-50 p-4 rounded-xl border border-slate-200"><span class="text-sm font-black text-slate-600 mr-4">해당 시나리오 최종 납부 세액:</span><span class="text-2xl font-black text-slate-900">${Math.round(ptTotal + finalJb).toLocaleString()} 만원</span></div>
+                        <h5 class='text-xs font-black text-slate-500 mb-2 mt-6'>② 종합부동산세 상세 산출 과정 (인별 합산)</h5>
+                        <div class='table-wrapper mb-4'>
+                            <table class='criteria-table'>
+                                <thead class='bg-slate-50'>
+                                    <tr>
+                                        <th>합산 공시가</th>
+                                        <th>기본공제</th>
+                                        <th>종부세 과세표준</th>
+                                        <th>적용세율</th>
+                                        <th>종부세 산출세액</th>
+                                        <th>재산세 이중과세 차감</th>
+                                        <th>1주택 세액공제</th>
+                                        <th class="bg-emerald-50">농어촌특별세 (20%)</th>
+                                        <th>최종 종부세 납부액</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <tr>
+                                        <td>${Math.round(gaSum).toLocaleString()}만</td>
+                                        <td class='text-red-500 font-bold'>-${ex.toLocaleString()}만</td>
+                                        <td>${Math.round(jbBase).toLocaleString()}만<br><span class='formula-text'>(공시가-공제)×${Math.round(c.jbRatio*100)}%</span></td>
+                                        <td class='${isHeavy ? 'text-orange-600' : 'text-blue-600'} font-bold'>${jbR.rate}<br><span class='formula-text'>${isHeavy ? '중과세율' : '일반세율'}</span></td>
+                                        <td>${Math.round(jbR.base_tax).toLocaleString()}만<br><span class='formula-text'>과표×세율-누진공제</span></td>
+                                        <td class='text-blue-500 font-bold'>-${Math.round(dup).toLocaleString()}만<br><span class='formula-text'>재산세 중복분 역산</span></td>
+                                        <td>${cTxt}<br><span class='text-red-500 font-bold'>${cAmt>0?'-'+Math.round(cAmt).toLocaleString()+'만':''}</span></td>
+                                        <td class='text-emerald-700 font-black bg-emerald-50/50'>+${Math.round(nongTeukTax).toLocaleString()}만<br><span class='formula-text'>공제 후 세액의 20%</span></td>
+                                        <td class='total-highlight text-red-600 text-lg'>${Math.round(finalJb).toLocaleString()}만</td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                        <div class="text-right bg-slate-50 p-4 rounded-xl border border-slate-200"><span class="text-sm font-black text-slate-600 mr-4">해당 시나리오 최종 납부 세액 (재산세+종부세):</span><span class="text-2xl font-black text-slate-900">${Math.round(ptTotal + finalJb).toLocaleString()} 만원</span></div>
                     </div>`;
                 });
-                detailHTML += `</div>`;
-            });
-
-            document.getElementById('detailed-calculation-container').innerHTML = detailHTML;
-
-            const renderCard = (id, title, data, color) => {
-                document.getElementById(id).innerHTML = `
-                <div class="p-6 rounded-3xl bg-slate-50 border shadow-sm h-full flex flex-col justify-between">
-                    <h4 class="font-black text-${color}-800 mb-6 flex items-center text-lg"><span class="w-2 h-5 bg-${color}-600 rounded-full mr-2"></span>${title} 요약</h4>
-                    <div class="space-y-4">
-                        <div class="bg-white p-4 rounded-xl border border-${color}-100 flex justify-between items-center"><div><span class="text-[0.6rem] font-black uppercase text-slate-400">현재 합계</span><br><b class="text-xl text-${color}-600">${Math.round(data.curr||0).toLocaleString()}만</b></div><div class="text-[0.6rem] text-slate-400 text-right">종부 ${Math.round(data.curr_jb||0).toLocaleString()}<br>재산 ${Math.round(data.curr_pt||0).toLocaleString()}</div></div>
-                        <div class="bg-white p-4 rounded-xl border border-red-50 flex justify-between items-center"><div><span class="text-[0.6rem] font-black uppercase text-slate-400">과거 최고점</span><br><b class="text-xl text-red-600">${Math.round(data.past||0).toLocaleString()}만</b></div><div class="text-[0.6rem] text-slate-400 text-right">종부 ${Math.round(data.past_jb||0).toLocaleString()}<br>재산 ${Math.round(data.past_pt||0).toLocaleString()}</div></div>
-                        <div class="bg-white p-4 rounded-xl border border-orange-100 flex justify-between items-center"><div><span class="text-[0.6rem] font-black uppercase text-slate-400">미래 예상</span><br><b class="text-xl text-orange-600">${Math.round(data.futr||0).toLocaleString()}만</b></div><div class="text-[0.6rem] text-slate-400 text-right">종부 ${Math.round(data.futr_jb||0).toLocaleString()}<br>재산 ${Math.round(data.futr_pt||0).toLocaleString()}</div></div>
-                    </div>
-                </div>`;
-            };
 
             renderCard('res-husband', '👨 남편', summary.husband, 'blue');
             renderCard('res-wife', '👩 아내', summary.wife, 'pink');
