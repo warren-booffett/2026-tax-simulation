@@ -3,116 +3,145 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>[워렌부핏's 보유세 시뮬레이터]</title>
+    <title>[워렌부핏's 보유세 시뮬레이터] V4.0</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <style>
         @import url('https://fonts.googleapis.com/css2?family=Pretendard:wght@400;600;700;900&display=swap');
         body { font-family: 'Pretendard', sans-serif; background-color: #f8fafc; color: #1e293b; letter-spacing: -0.02em; }
         .card { background: white; border-radius: 24px; box-shadow: 0 10px 25px -5px rgba(0,0,0,0.04); padding: 30px; border: 1px solid #f1f5f9; margin-bottom: 2rem; }
-        input, select { border: 1.5px solid #e2e8f0; padding: 12px; border-radius: 12px; width: 100%; transition: all 0.2s; font-size: 0.95rem; font-weight: 600; }
-        .btn-primary { background: linear-gradient(135deg, #1e3a8a 0%, #2563eb 100%); transition: all 0.3s; color: white; }
-        
-        /* 표 잘림 방지 및 가독성 최적화 (업그레이드됨) */
-        .table-wrapper { width: 100%; overflow-x: auto; border-radius: 16px; border: 1px solid #e2e8f0; margin-top: 1rem; background: white; }
-        .criteria-table { min-width: 1250px; width: 100%; border-collapse: collapse; text-align: center; table-layout: auto; } /* fixed 해제 및 최소너비 증가 */
-        .criteria-table th { background: #f8fafc; color: #64748b; font-weight: 800; padding: 12px 8px; border-bottom: 2px solid #e2e8f0; font-size: 0.8rem; border-right: 1px solid #f1f5f9; height: auto; min-height: 60px; vertical-align: middle; word-break: keep-all; white-space: normal; } /* 열 이름 줄바꿈 허용 */
-        .criteria-table td { padding: 20px 10px; border-bottom: 1px solid #f1f5f9; font-size: 0.85rem; font-weight: 700; border-right: 1px solid #f1f5f9; word-break: keep-all; white-space: normal; line-height: 1.6; }
-        
-        /* 행 높이 강제 조절 (업그레이드됨) */
-        .case-row { height: auto !important; min-height: 140px; } /* 고정 대신 유연하게 늘어나도록 변경 */
+        input, select { border: 1.5px solid #e2e8f0; padding: 12px; border-radius: 10px; width: 100%; transition: all 0.2s; font-size: 0.95rem; font-weight: 700; color: #1e293b; }
+        input:focus, select:focus { border-color: #3b82f6; outline: none; box-shadow: 0 0 0 3px rgba(59,130,246,0.1); }
+        .btn-primary { background: linear-gradient(135deg, #1e3a8a 0%, #2563eb 100%); transition: transform 0.2s, box-shadow 0.2s; color: white; }
+        .btn-primary:active { transform: scale(0.98); }
+        .table-wrapper { width: 100%; overflow-x: auto; border-radius: 16px; border: 1px solid #e2e8f0; background: white; margin-bottom: 1rem; }
+        .criteria-table { width: 100%; min-width: 1100px; border-collapse: collapse; text-align: center; white-space: nowrap; }
+        .criteria-table th { background: #f8fafc; color: #64748b; font-weight: 800; padding: 12px 16px; border-bottom: 2px solid #e2e8f0; border-right: 1px solid #f1f5f9; font-size: 0.75rem; text-transform: uppercase; }
+        .criteria-table td { padding: 14px 16px; border-bottom: 1px solid #f1f5f9; border-right: 1px solid #f1f5f9; font-size: 0.85rem; font-weight: 700; }
+        .rate-table { width: 100%; min-width: max-content; border-collapse: collapse; text-align: center; white-space: nowrap; }
+        .rate-table th { font-weight: 800; padding: 10px 14px; border-bottom: 2px solid #e2e8f0; font-size: 0.75rem; }
+        .rate-table td { padding: 12px 14px; border-bottom: 1px solid #f1f5f9; font-size: 0.85rem; font-weight: 700; }
         .heavy { color: #ef4444; background-color: #fef2f2; }
-        .desc-text { font-size: 0.75rem; color: #64748b; margin-top: 4px; line-height: 1.5; }
-        .radio-card { border: 1.5px solid #e2e8f0; padding: 12px; border-radius: 12px; cursor: pointer; transition: 0.2s; background: white; height: 100%; }
-        .radio-card:has(input:checked) { border-color: #3b82f6; background-color: #eff6ff; }
-        .info-badge { background: #dbeafe; color: #1e40af; padding: 2px 8px; border-radius: 6px; font-size: 0.7rem; font-weight: 800; display: inline-block; margin-top: 4px; }
+        .radio-card { border: 1.5px solid #e2e8f0; padding: 12px; border-radius: 12px; cursor: pointer; transition: 0.2s; background: white; height: 100%; display: flex; align-items: center; gap: 8px;}
+        .radio-card:has(input:checked) { border-color: #3b82f6; background-color: #eff6ff; box-shadow: 0 0 0 2px rgba(59,130,246,0.1); }
+        .info-badge { background: #dbeafe; color: #1e40af; padding: 3px 8px; border-radius: 6px; font-size: 0.7rem; font-weight: 800; display: inline-block; }
+        .formula-text { font-family: 'Courier New', monospace; font-size: 0.7rem; color: #64748b; font-weight: 500; display: block; margin-top: 4px; line-height: 1.4; }
+        .total-highlight { background-color: #f0f9ff; color: #0369a1; font-weight: 900; }
+        .equation-symbol { display: flex; align-items: center; justify-content: center; font-size: 2.5rem; font-weight: 900; color: #cbd5e1; }
+        
+        #result-area { transition: all 0.8s cubic-bezier(0.4, 0, 0.2, 1); }
+        .reveal-hidden { opacity: 0; transform: translateY(30px) scale(0.98); pointer-events: none; height: 0; overflow: hidden; margin: 0; padding: 0; border: none; }
+        .reveal-visible { opacity: 1; transform: translateY(0) scale(1); pointer-events: auto; height: auto; }
     </style>
 </head>
-<body class="p-4 md:p-10">
+<body class="p-4 md:p-10" onload="updateDynamicTable()">
 
     <div class="max-w-7xl mx-auto">
-        <header class="mb-12 text-center">
-            <div class="inline-block px-4 py-1 rounded-full bg-blue-100 text-blue-700 text-xs font-black mb-4 uppercase tracking-widest">For 월급쟁이부자들</div>
-            <h1 class="text-4xl md:text-5xl font-black text-slate-900 tracking-tighter mb-4">🏠 [워렌부핏's 보유세 시뮬레이터]</h1>
-            <div class="mt-6 flex flex-wrap justify-center gap-4">
-                <a href="https://www.realtyprice.kr/notice/town/nfSiteLink.htm" target="_blank" class="inline-flex items-center text-blue-600 hover:text-blue-800 font-bold text-sm bg-white px-5 py-2.5 rounded-full shadow-sm border border-blue-100 transition">
-                    🔍 국토부 공시가격 알리미 바로가기
-                </a>
-                <a href="https://weolbu.com/profile/62188/introduce" target="_blank" class="inline-flex items-center text-orange-600 hover:text-orange-800 font-bold text-sm bg-white px-5 py-2.5 rounded-full shadow-sm border border-orange-100 transition">
-                    👨‍💼 워렌부핏 프로필 바로가기
-                </a>
+        <header class="mb-8 text-center">
+            <div class="inline-block px-4 py-1 rounded-full bg-blue-100 text-blue-700 text-xs font-black mb-4 uppercase tracking-widest">Property Tax Pro</div>
+            <h1 class="text-4xl md:text-5xl font-black text-slate-900 tracking-tighter mb-4">🏠 워렌부핏's 보유세 시뮬레이터</h1>
+            <p class="text-slate-500 font-bold mb-6">부린이도 쉽게 쓰는 가계 합산 리포트 및 미래 세금 예측기 (V4.0)</p>
+            
+            <div class="flex flex-wrap justify-center gap-3 mb-4">
+                <a href="https://weolbu.com/s/LwMrcfsAhy" target="_blank" class="px-5 py-2.5 bg-slate-800 text-white rounded-xl text-sm font-bold shadow-md hover:bg-slate-700 transition flex items-center gap-2">📖 사용법 설명 가이드</a>
+                <a href="https://www.realtyprice.kr/notice/town/nfSiteLink.htm" target="_blank" class="px-5 py-2.5 bg-blue-100 text-blue-700 rounded-xl text-sm font-bold shadow-sm hover:bg-blue-200 transition flex items-center gap-2">🔎 내 집 공시가격 조회</a>
+                <a href="https://weolbu.com/profile/62188/introduce" target="_blank" class="px-5 py-2.5 bg-rose-100 text-rose-700 rounded-xl text-sm font-bold shadow-sm hover:bg-rose-200 transition flex items-center gap-2">👨‍💻 워렌부핏 프로필</a>
             </div>
         </header>
 
+        <div class="card bg-slate-50 border-slate-200 mb-8 p-6 md:p-8">
+            <h3 class="text-xl font-black text-slate-800 mb-4 flex items-center">📝 업데이트 노트 (V1.0 ➔ V2.0)</h3>
+            
+            <div class="grid md:grid-cols-2 gap-6">
+                <div>
+                    <h4 class="text-sm font-black text-blue-600 mb-2">[신규 기능 추가]</h4>
+                    <ul class="text-[0.9rem] text-slate-700 space-y-2 font-bold">
+                        <li>✅ <b class="text-slate-900">가계 통합 리포트:</b> 남편과 아내의 세금을 합쳐서 우리 집 총액을 한눈에 보여줍니다.</li>                
+                        <li>✅ <b class="text-slate-900">나이/기간별 세액공제:</b> 나이와 집 보유 기간을 자동으로 계산해 종부세 할인 혜택을 찾아줍니다.</li>
+                    </ul>
+                </div>
+                <div>
+                    <h4 class="text-sm font-black text-red-600 mb-2">[기존 오류 수정 및 정밀화]</h4>
+                    <ul class="text-[0.9rem] text-slate-700 space-y-2 font-bold">
+                        <li>🛠 <b class="text-slate-900">도시지역분 누락 해결:</b> 기존 일반 계산기들에서 흔히 누락되던 '도시지역분(과표의 0.14%)'을 추가하여 실제 고지서 세금과 일치시켰습니다.</li>
+                        <li>🛠 <b class="text-slate-900">고지서 정밀 동기화:</b> 재산세를 3단(본세/교육세/도시분)으로 분리 명시했습니다.</li>
+                        <li>🛠 <b class="text-slate-900">이중과세 차감 오류 수정:</b> 종부세에서 재산세를 뺄 때, 전문 세무 산식(공정비율 역산 분수식)을 적용해 오차를 줄였습니다.</li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+
         <div class="grid grid-cols-1 lg:grid-cols-3 gap-8 mb-8">
             <div class="card lg:col-span-1 border-t-8 border-t-blue-600">
-                <h2 class="text-xl font-black mb-6 flex items-center">⚙️ 미래 정책 변수 설정</h2>
+                <h2 class="text-xl font-black mb-6 flex items-center">⚙️ 미래 변수 설정 (숫자 입력)</h2>
                 <div class="space-y-4">
-                    <div>
-                        <label class="block text-[10px] font-black text-slate-400 mb-2 uppercase">미래 공시가격 현실화율 (%)</label>
-                        <input type="number" id="future-real" value="90" class="text-blue-600" oninput="calculate()">
+                    <div class="flex justify-between items-center bg-slate-50 p-3 rounded-xl">
+                        <label class="text-xs font-black text-slate-600">공시 현실화율 (%)</label>
+                        <input type="number" id="future-real" value="90" class="w-24 text-right !p-2 text-blue-600" oninput="updateDynamicTable()">
                     </div>
-                    <div>
-                        <label class="block text-[10px] font-black text-slate-400 mb-2 uppercase">미래 공정시장비율 (%)</label>
-                        <input type="number" id="future-ratio" value="100" class="text-blue-600" oninput="calculate()">
+                    <div class="flex justify-between items-center bg-slate-50 p-3 rounded-xl">
+                        <label class="text-xs font-black text-slate-600">공정시장비율 (%)</label>
+                        <input type="number" id="future-ratio" value="100" class="w-24 text-right !p-2 text-blue-600" oninput="updateDynamicTable()">
                     </div>
-                    <div>
-                        <label class="block text-[10px] font-black text-slate-400 mb-2 uppercase">미래 종부세 공제액 (만원)</label>
-                        <input type="number" id="future-ex-multi" value="50000" class="text-red-600" oninput="calculate()">
-                        <p class="desc-text">* 다주택자 기준 (디폴트 5억)</p>
+                    <div class="flex justify-between items-center bg-slate-50 p-3 rounded-xl">
+                        <label class="text-xs font-black text-slate-600">다주택 공제액 (만)</label>
+                        <input type="number" id="future-ex" value="50000" step="10000" class="w-28 text-right !p-2 text-red-600" oninput="updateDynamicTable()">
+                    </div>
+                    <div class="bg-emerald-50 p-4 rounded-xl border border-emerald-100">
+                        <div class="flex justify-between items-center mb-2">
+                            <label class="text-xs font-black text-emerald-800">1주택 세액공제 한도 (%)</label>
+                            <input type="number" id="future-credit" value="80" class="w-24 text-right !p-2 text-emerald-600" oninput="updateDynamicTable()">
+                        </div>
+                        <p class="text-[10.5px] text-emerald-700 font-bold leading-relaxed mt-2">
+                            * <b class="text-emerald-900">1세대 1주택자</b>에게만 적용되는 연령 및 장기보유 세액공제 혜택입니다.<br>
+                            * 현행 세법 기준 최대 <b class="text-emerald-900">80%</b>까지 할인받을 수 있습니다.<br>
+                            * 미래에 이 혜택이 축소되거나 아예 폐지되는 최악의 상황을 가정하고 싶다면 <b class="text-emerald-900">숫자 0</b>을 입력해 보세요.
+                        </p>
                     </div>
                 </div>
             </div>
 
             <div class="card lg:col-span-2 border-t-8 border-t-red-500">
-                <h2 class="text-xl font-black mb-6 flex items-center">⚖️ 미래 중과 판단 기준 (택 1)</h2>
+                <h2 class="text-xl font-black mb-6 flex items-center">⚖️ 미래 중과 판단 기준 (2021년 산식 적용)</h2>
                 <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
-                    <label class="radio-card">
-                        <input type="radio" name="heavy-logic" value="nonres" checked class="w-4 h-4 accent-red-600 mb-2" onchange="calculate()">
-                        <div class="text-xs font-bold text-slate-700 mb-1">비거주(투자용) 포함 시 중과</div>
-                        <p class="desc-text">실거주하지 않는 투자 주택 보유 시 미래 시나리오에서 징벌적 중과세율 적용</p>
-                    </label>
-                    <label class="radio-card">
-                        <input type="radio" name="heavy-logic" value="2house" class="w-4 h-4 accent-red-600 mb-2" onchange="calculate()">
-                        <div class="text-xs font-bold text-slate-700">2주택 이상 무조건 중과</div>
-                        <p class="desc-text">지역/거주 여부와 관계없이 2주택 이상 보유 시 미래 중과 대상 분류</p>
-                    </label>
-                    <label class="radio-card">
-                        <input type="radio" name="heavy-logic" value="reg2house" class="w-4 h-4 accent-red-600 mb-2" onchange="calculate()">
-                        <div class="text-xs font-bold text-slate-700">조정 1주택 포함 2주택 중과</div>
-                        <p class="desc-text">조정대상지역 주택을 포함하여 2주택 이상 보유 시 미래 중과 적용</p>
-                    </label>
-                    <label class="radio-card">
-                        <input type="radio" name="heavy-logic" value="3house" class="w-4 h-4 accent-red-600 mb-2" onchange="calculate()">
-                        <div class="text-xs font-bold text-slate-700">3주택 이상 무조건 중과</div>
-                        <p class="desc-text">다주택 규제 강화 시나리오로, 3주택자부터 미래 징벌적 중과 적용</p>
-                    </label>
+                    <label class="radio-card"><input type="radio" name="heavy-logic" value="비거주(투자용) 포함 시 무조건 중과" checked class="w-4 h-4 accent-red-600" onchange="updateDynamicTable()"><div class="text-sm font-bold text-slate-700">비거주(투자용) 포함 시 중과</div></label>
+                    <label class="radio-card"><input type="radio" name="heavy-logic" value="2주택 이상 무조건 중과" class="w-4 h-4 accent-red-600" onchange="updateDynamicTable()"><div class="text-sm font-bold text-slate-700">2주택 이상 무조건 중과</div></label>
+                    <label class="radio-card"><input type="radio" name="heavy-logic" value="조정지역 1주택 포함 2주택 중과" class="w-4 h-4 accent-red-600" onchange="updateDynamicTable()"><div class="text-sm font-bold text-slate-700">조정 1주택 포함 2주택 중과</div></label>
+                    <label class="radio-card"><input type="radio" name="heavy-logic" value="3주택 이상 무조건 중과" class="w-4 h-4 accent-red-600" onchange="updateDynamicTable()"><div class="text-sm font-bold text-slate-700">3주택 이상 무조건 중과</div></label>
                 </div>
+                <p class="mt-4 text-xs font-bold text-slate-400">※ 이 기준은 하단의 [미래 시뮬레이션] 산출 시에만 적용됩니다.</p>
             </div>
         </div>
 
         <div class="card">
             <div class="flex flex-col md:flex-row justify-between items-center mb-8 gap-4 border-b pb-4">
-                <h2 class="text-2xl font-black text-slate-900">01. 자산 정보 입력</h2>
-                <div class="flex items-center space-x-3 bg-blue-50 px-6 py-3 rounded-2xl border border-blue-100">
-                    <span class="text-sm font-bold text-blue-900">💍 혼인신고 완료 (부부 합산)</span>
-                    <input type="checkbox" id="marriage-status" class="w-6 h-6 cursor-pointer accent-blue-600" onchange="calculate()">
+                <h2 class="text-2xl font-black text-slate-900">01. 자산 포트폴리오 입력</h2>
+                <div class="flex flex-wrap items-center gap-4">
+                    <div class="flex items-center space-x-2 bg-slate-50 px-4 py-2 rounded-xl border border-slate-200">
+                        <span class="text-[11px] font-bold text-slate-600">남편 나이</span>
+                        <input type="number" id="age-husband" value="32" class="w-16 h-8 text-center text-sm !p-0">
+                    </div>
+                    <div class="flex items-center space-x-2 bg-slate-50 px-4 py-2 rounded-xl border border-slate-200">
+                        <span class="text-[11px] font-bold text-slate-600">아내 나이</span>
+                        <input type="number" id="age-wife" value="32" class="w-16 h-8 text-center text-sm !p-0">
+                    </div>
+                    <div class="flex items-center space-x-2 bg-blue-50 px-4 py-2 rounded-xl border border-blue-100">
+                        <span class="text-[11px] font-bold text-blue-900">혼인신고(1세대)</span>
+                        <input type="checkbox" id="marriage-status" checked class="w-5 h-5 accent-blue-600 cursor-pointer">
+                    </div>
                 </div>
             </div>
+            
             <div id="asset-inputs" class="space-y-4">
-                <div class="grid grid-cols-1 md:grid-cols-12 gap-2 asset-row p-4 border rounded-2xl bg-slate-50/50 hover:bg-white transition">
-                    <div class="md:col-span-3"><label class="text-[9px] font-bold text-slate-400 mb-1 block uppercase">물건명</label><input type="text" value="구리 아파트" class="p-name"></div>
-                    <div class="md:col-span-2">
-                        <label class="text-[9px] font-bold text-slate-400 mb-1 block uppercase">소유주</label>
-                        <select class="p-owner">
-                            <option value="husband" selected>남편</option>
-                            <option value="wife">아내</option>
-                            <option value="joint">공동명의</option>
-                        </select>
+                <div class="grid grid-cols-1 md:grid-cols-12 gap-2 asset-row p-4 border rounded-2xl bg-slate-50/50 hover:bg-white transition items-center">
+                    <div class="md:col-span-2"><label class="text-[9px] font-bold text-slate-400 mb-1 block uppercase">물건명</label><input type="text" value="구리 아파트" class="p-name !p-2 !text-sm"></div>
+                    <div class="md:col-span-2"><label class="text-[9px] font-bold text-slate-400 mb-1 block uppercase">소유주</label>
+                        <select class="p-owner !p-2 !text-sm"><option value="husband">남편</option><option value="wife">아내</option><option value="joint" selected>공동명의</option></select>
                     </div>
-                    <div class="md:col-span-2"><label class="text-[9px] font-bold text-slate-400 mb-1 block uppercase">공시가격(만원)</label><input type="number" value="54000" class="p-price text-blue-700 font-bold"></div>
-                    <div class="md:col-span-2"><label class="text-[9px] font-bold text-slate-400 mb-1 block uppercase">조정지역</label><select class="p-reg"><option value="N">비조정</option><option value="Y">조정지역</select></div>
-                    <div class="md:col-span-2"><label class="text-[9px] font-bold text-slate-400 mb-1 block uppercase">실거주</label><select class="p-res"><option value="Y">실거주</option><option value="N" selected>비거주</option></select></div>
-                    <div class="md:col-span-1 flex items-end"><button onclick="removeRow(this)" class="w-full bg-white text-slate-300 font-bold py-2.5 rounded-xl border border-slate-100 hover:text-red-500 transition">✕</button></div>
+                    <div class="md:col-span-2"><label class="text-[9px] font-bold text-slate-400 mb-1 block uppercase">공시가격(만원)</label><input type="number" value="54000" class="p-price text-blue-700 !p-2 !text-sm"></div>
+                    <div class="md:col-span-2"><label class="text-[9px] font-bold text-slate-400 mb-1 block uppercase">취득일</label><input type="date" value="2024-03-01" class="p-date !p-2 !text-xs text-slate-600"></div>
+                    <div class="md:col-span-1"><label class="text-[9px] font-bold text-slate-400 mb-1 block uppercase">조정지역</label><select class="p-reg !p-2 !text-sm"><option value="N">비조정</option><option value="Y" selected>조정지역</select></div>
+                    <div class="md:col-span-2"><label class="text-[9px] font-bold text-slate-400 mb-1 block uppercase">실거주</label><select class="p-res !p-2 !text-sm"><option value="Y">실거주</option><option value="N" selected>비거주</option></select></div>
+                    <div class="md:col-span-1 flex items-end"><button onclick="removeRow(this)" class="w-full bg-white text-slate-300 font-bold py-2 rounded-lg border border-slate-200 hover:text-red-500 hover:bg-red-50 transition">✕</button></div>
                 </div>
             </div>
             <div class="flex gap-4 mt-6">
@@ -121,240 +150,302 @@
             </div>
         </div>
 
-        <div id="result-area" class="hidden animate-in fade-in duration-700">
+        <div id="result-area" class="reveal-hidden">
             <div class="card border-2 border-blue-600 bg-white">
-                <h2 class="text-2xl font-black mb-10 text-slate-900 border-b pb-4 text-center">02. 시나리오별 보유세 총액 리포트</h2>
-                <div id="owner-results" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8"></div>
+                <h2 class="text-2xl font-black mb-10 text-slate-900 border-b pb-4 text-center">02. 시나리오별 보유세 등식 리포트 (Household View)</h2>
+                <div class="grid grid-cols-1 xl:grid-cols-11 gap-4 items-center">
+                    <div id="res-husband" class="xl:col-span-3"></div>
+                    <div class="hidden xl:flex equation-symbol xl:col-span-1">+</div>
+                    <div id="res-wife" class="xl:col-span-3"></div>
+                    <div class="hidden xl:flex equation-symbol xl:col-span-1">=</div>
+                    <div id="res-household" class="xl:col-span-3"></div>
+                </div>
             </div>
-        </div>
 
-        <div id="detail-area" class="hidden">
-            <div class="card">
-                <h2 class="text-2xl font-black mb-8 text-slate-900">🔍 03. 시나리오별 과세표준 산출 상세 과정</h2>
-                <div class="space-y-12" id="scenario-details-container">
-                    </div>
+            <div class="card mb-8">
+                <h2 class="text-2xl font-black mb-4 text-slate-900">🔍 03. 인별/세목별 상세 산출 과정</h2>
+                <p class="text-sm font-bold text-slate-500 mb-8">※ 재산세 3단 분리(본세/교육/도시) 및 종부세 중복분 차감 역산 공식이 적용된 투명화 리포트입니다.</p>
+                <div class="space-y-12" id="detailed-calculation-container"></div>
             </div>
         </div>
 
         <div class="card">
-            <h2 class="text-xl font-black mb-6 text-slate-900">📊 보유세 산정 기본 기준표 (요약)</h2>
+            <h2 class="text-xl font-black mb-6 text-slate-900">📊 [기준표 1] 정책 시나리오별 적용 변수 통합</h2>
             <div class="table-wrapper">
-                <table class="criteria-table" style="min-width: 800px;">
+                <table class="criteria-table">
                     <thead class="bg-slate-50">
-                        <tr>
-                            <th>구분</th>
-                            <th class="text-blue-600">현재 (2026.03)</th>
-                            <th class="text-red-600">과거 최고점 (문 정부)</th>
-                            <th class="text-orange-600">미래 예상 (강화)</th>
-                        </tr>
+                        <tr><th>구분 항목</th><th class="text-blue-600">현재 적용 (2026.03 현행)</th><th class="text-red-600">과거 최고점 (2021년)</th><th class="text-orange-600">미래 예상 (사용자 설정)</th></tr>
                     </thead>
                     <tbody>
-                        <tr>
-                            <td class="font-bold">공시가격 현실화율</td>
-                            <td>69%</td>
-                            <td>75%</td>
-                            <td>설정값 반영 (기본 90%)</td>
-                        </tr>
-                        <tr>
-                            <td class="font-bold">공정시장가액비율</td>
-                            <td>재산세 60% / 종부세 60%</td>
-                            <td>재산세 60% / 종부세 100%</td>
-                            <td>재산세 80% / 종부세 설정값(기본 100%)</td>
-                        </tr>
-                        <tr>
-                            <td class="font-bold">종부세 기본공제</td>
-                            <td>1주택 12억 / 다주택 9억</td>
-                            <td>1주택 11억 / 다주택 6억</td>
-                            <td>1주택 11억 / 다주택 설정값(기본 5억)<br><span class="text-[10px] text-red-500">*비거주 1주택 중과 시 다주택 공제(설정값) 적용</span></td>
-                        </tr>
-                        <tr>
-                            <td class="font-bold">중과세율 적용 기준</td>
-                            <td>3주택 이상 & 과표 12억 초과</td>
-                            <td>조정대상 2주택 이상<br>또는 3주택 이상</td>
-                            <td>선택한 커스텀 중과 기준 반영</td>
-                        </tr>
+                        <tr><td class="font-bold">공시가격 현실화율</td><td>69% 수준 동결</td><td>75% ~ 80%</td><td class="bg-orange-50 font-black text-orange-600"><span id="tbl-fut-real">90%</span></td></tr>
+                        <tr><td class="font-bold">재산세 공정시장가액비율</td><td><span class="text-blue-600 font-bold">1주택 43~45% (가액별)</span> / 다주택 60%</td><td>일괄 60%</td><td class="bg-orange-50 font-black text-orange-600">다주택 기준 80% 가설 적용</td></tr>
+                        <tr><td class="font-bold">종부세 공정시장가액비율</td><td>60%</td><td>95%</td><td class="bg-orange-50 font-black text-orange-600"><span id="tbl-fut-ratio">100%</span></td></tr>
+                        <tr><td class="font-bold">종부세 기본공제</td><td><span class="text-blue-600 font-bold">1주택 12억 / 다주택 9억</span></td><td>1주택 11억 / 다주택 6억</td><td class="bg-orange-50 font-black text-orange-600">1주택 11억 / 다주택 <span id="tbl-fut-ex">5억</span></td></tr>
+                        <tr><td class="font-bold">종부세 중과세율 판단 기준</td><td><span class="text-blue-600 font-bold">3주택 이상 & 과표 12억 초과분만</span></td><td>조정 2주택 이상 또는 3주택 이상</td><td class="bg-orange-50 font-black text-orange-700 bg-orange-100/50" id="tbl-fut-logic">비거주 포함 시 중과</td></tr>
+                        <tr><td class="font-bold">1주택 세액공제 한도</td><td>최대 80% (고령 40% + 장기 50%)</td><td>최대 80% (당시 상향됨)</td><td class="bg-orange-50 font-black text-orange-600">최대 <span id="tbl-fut-credit">80%</span> 반영</td></tr>
                     </tbody>
                 </table>
             </div>
         </div>
 
         <div class="card">
-            <h2 class="text-xl font-black mb-6 text-slate-900">📊 종합부동산세(종부세) 산정 기준표</h2>
-            <div class="table-wrapper">
-                <table class="criteria-table">
-                    <thead>
-                        <tr class="bg-slate-50">
-                            <th rowspan="2" style="width:130px">과표 구간<br>(공제 후)</th>
-                            <th colspan="2" class="text-blue-600">현재 (2026.03)</th>
-                            <th colspan="2" class="text-red-600">과거 최고점 (문)</th>
-                            <th colspan="2" class="text-orange-600">미래 예상 (강화)</th>
-                        </tr>
-                        <tr class="bg-slate-50 text-[10px]">
-                            <th>일반</th><th>중과</th><th>일반</th><th>중과</th><th>일반</th><th>중과</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        <tr class="bg-slate-50/50 case-row">
-                            <td class="font-black text-[10px]">Case 기준</td>
-                            <td>조정1, 비조정1,<br>조정2, 비조정2</td><td>3주택 이상+<br>과표 12억 초과분</td>
-                            <td>조정1, 비조정1,<br>비조정2</td><td>조정2, 조정1+비조정1,<br>3주택 이상</td>
-                            <td>실거주 1주택</td><td id="td-future-case" class="heavy font-black"></td>
-                        </tr>
-                        <tr class="case-row">
-                            <td class="font-black text-[10px]">공제액 기준</td>
-                            <td>1주택 12억 / 다주택 9억</td><td>다주택 9억</td>
-                            <td>1주택 11억 / 다주택 6억</td><td>다주택 6억</td>
-                            <td>1주택 11억</td><td id="td-future-ex" class="heavy font-black"></td>
-                        </tr>
-                        <tr><td>3억 원 이하</td><td>0.50%</td><td>0.50%</td><td>0.60%</td><td class="heavy">1.20%</td><td>0.50%</td><td class="heavy">1.20%</td></tr>
-                        <tr><td>6억 원 이하</td><td>0.70%</td><td>0.70%</td><td>0.80%</td><td class="heavy">1.60%</td><td>0.70%</td><td class="heavy">1.60%</td></tr>
-                        <tr><td>12억 원 이하</td><td>1.00%</td><td>1.00%</td><td>1.20%</td><td class="heavy">2.20%</td><td>1.00%</td><td class="heavy">2.20%</td></tr>
-                        <tr><td>25억 원 이하</td><td>1.30%</td><td class="heavy">2.00%</td><td>1.60%</td><td class="heavy">3.60%</td><td>1.30%</td><td class="heavy">3.60%</td></tr>
-                        <tr><td>50억 원 이하</td><td>1.50%</td><td class="heavy">3.00%</td><td>2.20%</td><td class="heavy">5.00%</td><td>1.50%</td><td class="heavy">5.00%</td></tr>
-                        <tr><td>94억 원 이하</td><td>2.00%</td><td class="heavy">4.00%</td><td>3.00%</td><td class="heavy">6.00%</td><td>2.00%</td><td class="heavy">6.00%</td></tr>
-                        <tr><td>94억 초과</td><td>2.70%</td><td class="heavy">5.00%</td><td>3.00%</td><td class="heavy">6.00%</td><td>2.70%</td><td class="heavy">6.00%</td></tr>
-                    </tbody>
-                </table>
-            </div>
-        </div>
+            <h2 class="text-xl font-black mb-6 text-slate-900">📊 [기준표 2] 종합부동산세(종부세) 세율표 3단 분리</h2>
+            <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
+                <div class="table-wrapper border-2 border-blue-100 shadow-sm rounded-xl">
+                    <table class="rate-table">
+                        <thead class="bg-blue-50">
+                            <tr><th colspan="3" class="text-blue-800 text-[13px]">🔵 현재 (2026.03 현행) 종부세율</th></tr>
+                            <tr><th>과세표준 구간</th><th class="text-blue-600">일반</th><th class="text-blue-600 border-l border-blue-100">중과</th></tr>
+                        </thead>
+                        <tbody>
+                            <tr><td>3억 원 이하</td><td>0.5%</td><td class="border-l border-blue-50">0.5%</td></tr>
+                            <tr><td>6억 원 이하</td><td>0.7%</td><td class="border-l border-blue-50">0.7%</td></tr>
+                            <tr><td>12억 원 이하</td><td>1.0%</td><td class="border-l border-blue-50 font-bold bg-blue-50/50 text-blue-700">1.0%</td></tr>
+                            <tr><td>25억 원 이하</td><td>1.3%</td><td class="border-l border-blue-50 heavy">2.0%</td></tr>
+                            <tr><td>50억 원 이하</td><td>1.5%</td><td class="border-l border-blue-50 heavy">3.0%</td></tr>
+                            <tr><td>94억 원 이하</td><td>2.0%</td><td class="border-l border-blue-50 heavy">4.0%</td></tr>
+                            <tr><td>94억 초과</td><td>2.7%</td><td class="border-l border-blue-50 heavy">5.0%</td></tr>
+                        </tbody>
+                    </table>
+                </div>
 
-        <div class="card">
-            <h2 class="text-xl font-black mb-6 text-slate-900">📊 재산세 산정 기준표</h2>
-            <div class="table-wrapper">
-                <table class="criteria-table">
-                    <thead>
-                        <tr class="bg-slate-50">
-                            <th>과세표준 구간</th>
-                            <th>1주택 특례 (9억↓)</th>
-                            <th>다주택 / 일반</th>
-                            <th class="text-orange-600">미래 강화 (예상)</th>
-                            <th>세액 산출 공식 (누진)</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        <tr><td>6천만원 이하</td><td>0.05%</td><td>0.10%</td><td>0.15%</td><td>과표 x 세율</td></tr>
-                        <tr><td>1.5억원 이하</td><td>0.10%</td><td>0.15%</td><td>0.20%</td><td>6만 + (초과분 x 세율)</td></tr>
-                        <tr><td>3억원 이하</td><td>0.20%</td><td>0.25%</td><td>0.35%</td><td>19.5만 + (초과분 x 세율)</td></tr>
-                        <tr><td>3억원 초과</td><td>0.35%</td><td>0.40%</td><td>0.50%</td><td>57만 + (초과분 x 세율)</td></tr>
-                    </tbody>
-                </table>
+                <div class="table-wrapper border-2 border-red-100 shadow-sm rounded-xl">
+                    <table class="rate-table">
+                        <thead class="bg-red-50">
+                            <tr><th colspan="3" class="text-red-800 text-[13px]">🔴 과거 (2021년 최고점) 종부세율</th></tr>
+                            <tr><th>과세표준 구간</th><th class="text-red-600">일반</th><th class="text-red-600 border-l border-red-100">중과</th></tr>
+                        </thead>
+                        <tbody>
+                            <tr><td>3억 원 이하</td><td>0.6%</td><td class="border-l border-red-50 heavy">1.2%</td></tr>
+                            <tr><td>6억 원 이하</td><td>0.8%</td><td class="border-l border-red-50 heavy">1.6%</td></tr>
+                            <tr><td>12억 원 이하</td><td>1.2%</td><td class="border-l border-red-50 heavy">2.2%</td></tr>
+                            <tr><td>25억 원 이하</td><td>1.6%</td><td class="border-l border-red-50 heavy">3.6%</td></tr>
+                            <tr><td>50억 원 이하</td><td>2.2%</td><td class="border-l border-red-50 heavy">5.0%</td></tr>
+                            <tr><td>94억 원 이하</td><td>3.0%</td><td class="border-l border-red-50 heavy">6.0%</td></tr>
+                            <tr><td>94억 초과</td><td>3.0%</td><td class="border-l border-red-50 heavy">6.0%</td></tr>
+                        </tbody>
+                    </table>
+                </div>
+
+                <div class="table-wrapper border-2 border-orange-200 shadow-sm rounded-xl">
+                    <table class="rate-table">
+                        <thead class="bg-orange-50">
+                            <tr><th colspan="3" class="text-orange-800 text-[13px]">🟠 미래 시뮬레이션 종부세율 (과거기준 적용)</th></tr>
+                            <tr><th>과세표준 구간</th><th class="text-orange-600">일반</th><th class="text-orange-600 border-l border-orange-200">중과 <br><span class="text-[10px] text-orange-500 font-bold" id="tbl-fut-rate-logic">(비거주 포함 시)</span></th></tr>
+                        </thead>
+                        <tbody>
+                            <tr><td>3억 원 이하</td><td>0.6%</td><td class="border-l border-orange-100 bg-orange-50/50 text-orange-700">1.2%</td></tr>
+                            <tr><td>6억 원 이하</td><td>0.8%</td><td class="border-l border-orange-100 bg-orange-50/50 text-orange-700">1.6%</td></tr>
+                            <tr><td>12억 원 이하</td><td>1.2%</td><td class="border-l border-orange-100 bg-orange-50/50 text-orange-700">2.2%</td></tr>
+                            <tr><td>25억 원 이하</td><td>1.6%</td><td class="border-l border-orange-100 bg-orange-50/50 text-orange-700">3.6%</td></tr>
+                            <tr><td>50억 원 이하</td><td>2.2%</td><td class="border-l border-orange-100 bg-orange-50/50 text-orange-700">5.0%</td></tr>
+                            <tr><td>94억 원 이하</td><td>3.0%</td><td class="border-l border-orange-100 bg-orange-50/50 text-orange-700">6.0%</td></tr>
+                            <tr><td>94억 초과</td><td>3.0%</td><td class="border-l border-orange-100 bg-orange-50/50 text-orange-700">6.0%</td></tr>
+                        </tbody>
+                    </table>
+                </div>
             </div>
+            <p class="mt-4 text-xs font-bold text-slate-400">※ 재산세 기준은 현행법(누진공제 산식)을 공통으로 사용하며, 시나리오별로 공정시장가액비율만 다르게 적용됩니다.</p>
         </div>
     </div>
 
     <script>
-        const oMap = { husband: "남편", wife: "아내", joint: "공동" };
-        function addRow() { const container = document.getElementById('asset-inputs'); const newRow = container.children[0].cloneNode(true); newRow.querySelectorAll('input').forEach(input => input.value = ''); container.appendChild(newRow); }
-        function removeRow(btn) { const rows = document.querySelectorAll('.asset-row'); if (rows.length > 1) btn.closest('.asset-row').remove(); calculate(); }
-
-        function calcPT(base, scenario) {
-            let rateIdx = (scenario === 'futr') ? 2 : (scenario === 'special' ? 0 : 1);
-            const rates = [[0.0005, 0.001, 0.002, 0.0035], [0.001, 0.0015, 0.0025, 0.004], [0.0015, 0.002, 0.0035, 0.005]];
-            const decs = [[0, 3, 12, 42], [0, 6, 19.5, 57], [0, 9, 27, 79.5]];
-            const r = rates[rateIdx], d = decs[rateIdx];
-            let tax = 0, rateStr = "";
-            if (base <= 6000) { tax = base * r[0]; rateStr = (r[0]*100).toFixed(2) + "%"; }
-            else if (base <= 15000) { tax = d[1] + (base - 6000) * r[1]; rateStr = (r[1]*100).toFixed(2) + "%"; }
-            else if (base <= 30000) { tax = d[2] + (base - 15000) * r[2]; rateStr = (r[2]*100).toFixed(2) + "%"; }
-            else { tax = d[3] + (base - 30000) * r[3]; rateStr = (r[3]*100).toFixed(2) + "%"; }
-            return { total: tax + (base * 0.0014) + (tax * 0.2), rate: rateStr };
+        // 1. 유틸리티 함수
+        function safeNum(v) { return Number(v.toString().replace(/[^0-9.-]+/g, "")) || 0; }
+        function addRow() { 
+            const container = document.getElementById('asset-inputs'); 
+            const newRow = container.children[0].cloneNode(true); 
+            newRow.querySelector('.p-name').value = ''; newRow.querySelector('.p-price').value = '';
+            container.appendChild(newRow);
         }
+        function removeRow(btn) { 
+            if(document.querySelectorAll('.asset-row').length > 1) { btn.closest('.asset-row').remove(); }
+        }
+
+        // 실시간 기준표 업데이트 함수 (버튼 안 눌러도 즉시 작동)
+        function updateDynamicTable() {
+            document.getElementById('tbl-fut-real').innerText = document.getElementById('future-real').value + '%';
+            document.getElementById('tbl-fut-ratio').innerText = document.getElementById('future-ratio').value + '%';
+            
+            let exVal = safeNum(document.getElementById('future-ex').value);
+            let exStr = exVal >= 10000 ? (exVal/10000) + '억' : exVal + '만';
+            document.getElementById('tbl-fut-ex').innerText = exStr;
+            
+            document.getElementById('tbl-fut-credit').innerText = document.getElementById('future-credit').value + '%';
+            
+            const logicText = document.querySelector('input[name="heavy-logic"]:checked').value;
+            document.getElementById('tbl-fut-logic').innerText = logicText;
+            
+            // 미래 세율표 괄호 안의 글자만 추출 (예: '비거주(투자용) 포함 시')
+            const shortLogic = logicText.split(" 무조건")[0];
+            document.getElementById('tbl-fut-rate-logic').innerText = "(" + shortLogic + ")";
+        }
+
+        // 2. 재산세 3단 분리 산식
+        function getDetailedPT(priceMan, is1H, scenario) {
+            const fReal = safeNum(document.getElementById('future-real').value)/100;
+            const realRatio = scenario === 'curr' ? 0.69 : (scenario === 'past' ? 0.75 : fReal);
+            const ga = (priceMan / 0.69) * realRatio;
+            
+            let fmvr = 0.6;
+            if (is1H && scenario === 'curr') fmvr = ga <= 30000 ? 0.43 : (ga <= 60000 ? 0.44 : 0.45);
+            else if (scenario === 'futr') fmvr = 0.8; 
+
+            const baseMan = ga * fmvr;
+            const rates = (is1H && ga <= 90000 && scenario === 'curr') ? [0.0005, 0.001, 0.002, 0.0035] : [0.001, 0.0015, 0.0025, 0.004];
+            const deduc = (is1H && ga <= 90000 && scenario === 'curr') ? [0, 3, 12, 42] : [0, 6, 19.5, 57];
+            
+            let purePT = 0, appliedRate = 0;
+            if (baseMan <= 6000) { purePT = baseMan * rates[0]; appliedRate = rates[0]; }
+            else if (baseMan <= 15000) { purePT = (baseMan - 6000) * rates[1] + deduc[1]; appliedRate = rates[1]; }
+            else if (baseMan <= 30000) { purePT = (baseMan - 15000) * rates[2] + deduc[2]; appliedRate = rates[2]; }
+            else { purePT = (baseMan - 30000) * rates[3] + deduc[3]; appliedRate = rates[3]; }
+
+            const edu = purePT * 0.2;
+            const city = baseMan * 0.0014;
+            return { ga, fmvr, realRatio, baseMan, purePT, appliedRate, edu, city, total: purePT + edu + city };
+        }
+
+        // 3. 종부세 누진 산식
+        const JB_TABLES = {
+            'curr_gen': [[0,0.005,0],[30000,0.007,150],[60000,0.010,360],[120000,0.013,960],[250000,0.015,2650],[500000,0.020,6400],[940000,0.027,15200]],
+            'curr_hvy': [[0,0.005,0],[30000,0.007,150],[60000,0.010,360],[120000,0.020,960],[250000,0.030,3560],[500000,0.040,11060],[940000,0.050,28660]],
+            'past_gen': [[0,0.006,0],[30000,0.008,180],[60000,0.012,420],[120000,0.016,1140],[250000,0.022,3220],[500000,0.030,8720],[940000,0.030,21920]],
+            'past_hvy': [[0,0.012,0],[30000,0.016,360],[60000,0.022,840],[120000,0.036,2160],[250000,0.050,6840],[500000,0.060,19340],[940000,0.060,45740]]
+        };
 
         function getJB(base, type) {
-            if (base <= 0) return { tax: 0, rate: "0%" };
-            const table = {
-                'gen': [[0,0.005,0],[30000,0.007,150],[60000,0.01,360],[120000,0.013,960],[250000,0.015,2650],[500000,0.02,6400],[940000,0.027,15200]],
-                'hvy': [[0,0.012,0],[30000,0.016,360],[60000,0.022,840],[120000,0.036,2160],[250000,0.05,6840],[500000,0.06,19340]],
-                'curr_hvy': [[0,0.005,0],[30000,0.007,150],[60000,0.01,360],[120000,0.02,1560],[250000,0.03,4160],[500000,0.04,11660]]
-            };
-            const brks = table[type] || table['gen'];
-            let t = 0, r = "0%"; brks.forEach(b => { if(base > b[0]) { t = (base - b[0]) * b[1] + b[2]; r = (b[1]*100).toFixed(2) + "%"; } });
-            return { tax: t * 1.2, rate: r };
+            if (base <= 0) return { tax: 0, rate: "0%", base_tax: 0 };
+            const brks = JB_TABLES[type];
+            let t = 0, r = "0%"; 
+            brks.forEach(b => { if(base > b[0]) { t = (base - b[0]) * b[1] + b[2]; r = (b[1]*100).toFixed(1) + "%"; } });
+            return { base_tax: t, rate: r };
         }
 
+        // 4. 메인 시뮬레이션 엔진
         function calculate() {
-            const rows = document.querySelectorAll('.asset-row');
-            let rawData = [];
-            rows.forEach(row => {
-                const p = { name: row.querySelector('.p-name').value, owner: row.querySelector('.p-owner').value, price: parseFloat(row.querySelector('.p-price').value) || 0, isReg: row.querySelector('.p-reg').value === 'Y', isRes: row.querySelector('.p-res').value === 'Y' };
-                if(p.owner === 'joint') {
-                    rawData.push({...p, owner: 'husband', price: p.price / 2, name: p.name + '(공동지분)'});
-                    rawData.push({...p, owner: 'wife', price: p.price / 2, name: p.name + '(공동지분)'});
-                } else rawData.push(p);
+            // 결과창 멋지게 등장
+            const resArea = document.getElementById('result-area');
+            resArea.classList.remove('reveal-hidden');
+            resArea.classList.add('reveal-visible');
+            
+            updateDynamicTable();
+
+            const rows = Array.from(document.querySelectorAll('.asset-row'));
+            let assets = [];
+            rows.forEach(r => {
+                const o = r.querySelector('.p-owner').value, p = safeNum(r.querySelector('.p-price').value), isReg = r.querySelector('.p-reg').value === 'Y', isRes = r.querySelector('.p-res').value === 'Y', date = r.querySelector('.p-date').value, name = r.querySelector('.p-name').value;
+                if(o === 'joint') {
+                    assets.push({name: name+'(50%)', owner:'husband', price: p/2, fullPrice:p, share:0.5, isReg, isRes, date});
+                    assets.push({name: name+'(50%)', owner:'wife', price: p/2, fullPrice:p, share:0.5, isReg, isRes, date});
+                } else assets.push({name, owner:o, price:p, fullPrice:p, share:1, isReg, isRes, date});
             });
 
             const isMarried = document.getElementById('marriage-status').checked;
-            const fReal = parseFloat(document.getElementById('future-real').value) / 100;
-            const fRatio = parseFloat(document.getElementById('future-ratio').value) / 100;
-            const fEx = parseFloat(document.getElementById('future-ex-multi').value);
+            const ages = { husband: safeNum(document.getElementById('age-husband').value), wife: safeNum(document.getElementById('age-wife').value) };
             const hLogic = document.querySelector('input[name="heavy-logic"]:checked').value;
-            
-            // 미래 기준표 동적 업데이트
-            const heavyLabels = {
-                nonres: "비거주(투자용) 포함<br>시 전체 중과",
-                '2house': "2주택 이상<br>전체 중과",
-                reg2house: "조정 1주택 포함<br>2주택 이상 중과",
-                '3house': "3주택 이상<br>무조건 중과"
+
+            const sVars = {
+                curr: { r: 0.69, ex1: 120000, exM: 90000, jbRatio: 0.6, ratesGen: 'curr_gen', ratesHvy: 'curr_hvy', creditMax: 0.8 },
+                past: { r: 0.75, ex1: 110000, exM: 60000, jbRatio: 1.0, ratesGen: 'past_gen', ratesHvy: 'past_hvy', creditMax: 0.8 },
+                futr: { r: safeNum(document.getElementById('future-real').value)/100, ex1: 110000, exM: safeNum(document.getElementById('future-ex').value), jbRatio: safeNum(document.getElementById('future-ratio').value)/100, ratesGen: 'past_gen', ratesHvy: 'past_hvy', creditMax: safeNum(document.getElementById('future-credit').value)/100 }
             };
-            document.getElementById('td-future-case').innerHTML = heavyLabels[hLogic];
-            document.getElementById('td-future-ex').innerText = fEx.toLocaleString() + "만원";
 
-            const sc = { curr: { r: 0.69, pt: 0.6, jb: 0.6, ex1: 120000, exM: 90000 }, past: { r: 0.75, pt: 0.6, jb: 1.0, ex1: 110000, exM: 60000 }, futr: { r: fReal, pt: 0.8, jb: fRatio, ex1: 110000, exM: fEx } };
-            const groups = isMarried ? [['husband', 'wife']] : [['husband'], ['wife']];
-            let sHTML = '', dHTMLs = { curr: '', past: '', futr: '' };
-            const thHTML = `<tr><th>물건명</th><th>소유주</th><th>조정</th><th>공시가격<br>(현실화반영)</th><th>공정시장가액비율<br>(재산/종부)</th><th>종부과표산식</th><th>재산세 과표</th><th>재산세액</th><th>종부세 과표</th><th>종부세율</th><th>종부세액</th></tr>`;
+            let detailHTML = '';
+            let summary = { husband:{}, wife:{}, household:{} };
 
-            groups.forEach(group => {
-                const gData = rawData.filter(p => group.includes(p.owner)); if (gData.length === 0) return;
-                const r = { curr: {pt:0, jb:0}, past: {pt:0, jb:0}, futr: {pt:0, jb:0} };
+            ['husband', 'wife'].forEach(owner => {
+                const oA = assets.filter(a => a.owner === owner);
+                if(oA.length === 0) return;
+
+                detailHTML += `<div class='mb-12'><h3 class='text-xl font-black mb-4 border-l-4 border-blue-600 pl-3'>👤 ${owner==='husband'?'남편 명의':'아내 명의'} 상세 명세</h3>`;
                 
-                ['curr', 'past', 'futr'].forEach(s => {
-                    const c = sc[s]; let sumG = 0;
-                    gData.forEach(p => { 
-                        const gA = (p.price / 0.69) * c.r; const isS = (gData.length === 1 && gA <= 90000 && s !== 'futr');
-                        const pR = calcPT(gA * c.pt, isS ? 'special' : (s === 'futr' ? 'futr' : 'normal'));
-                        r[s].pt += pR.total; sumG += gA; 
-                    });
-                    
-                    // 비거주 1주택 미래 공제액 박탈 (다주택 공제액 적용)
-                    let ex = (gData.length === 1) ? c.ex1 : c.exM;
-                    if (s === 'futr' && gData.length === 1 && hLogic === 'nonres' && !gData[0].isRes) {
-                        ex = c.exM;
-                    }
-                    
-                    const bJ = Math.max(0, (sumG - ex) * c.jb);
-                    let type = 'gen';
-                    if (s === 'curr') type = (gData.length >= 3 && bJ > 120000) ? 'curr_hvy' : 'gen';
-                    else if (s === 'past') type = (gData.length >= 3 || (gData.length >= 2 && gData.some(pr => pr.isReg))) ? 'hvy' : 'gen';
-                    else {
-                        if (hLogic === 'nonres') type = (gData.length >= 2 || gData.some(pr => !pr.isRes)) ? 'hvy' : 'gen';
-                        else if (hLogic === 'reg2house') type = (gData.length >= 2 && gData.some(pr => pr.isReg)) ? 'hvy' : 'gen';
-                        else if (hLogic === '2house') type = gData.length >= 2 ? 'hvy' : 'gen';
-                        else type = gData.length >= 3 ? 'hvy' : 'gen';
-                    }
-                    const jR = getJB(bJ, type); r[s].jb = jR.tax;
+                ['curr', 'past', 'futr'].forEach(scen => {
+                    const c = sVars[scen];
+                    const is1H = (isMarried ? rows.length === 1 : oA.length === 1);
+                    let ptTotal = 0, ptPureSum = 0, ptBaseSum = 0, gaSum = 0, ptRowHTML = '';
 
-                    gData.forEach(p => {
-                        const gA = (p.price / 0.69) * c.r; const pR = calcPT(gA * c.pt, (gData.length === 1 && gA <= 90000 && s !== 'futr') ? 'special' : (s === 'futr' ? 'futr' : 'normal'));
+                    oA.forEach(a => {
+                        const d = getDetailedPT(a.fullPrice, is1H, scen);
+                        const myPure = d.purePT * a.share, myEdu = d.edu * a.share, myCity = d.city * a.share, myTotal = d.total * a.share;
+                        ptTotal += myTotal; ptPureSum += myPure; ptBaseSum += (d.baseMan * a.share); gaSum += (d.ga * a.share);
                         
-                        // 합산 수식을 사용자가 쉽게 알아볼 수 있도록 텍스트 수정
-                        let sumText = (sumG / 10000).toFixed(1);
-                        let exText = (ex / 10000).toFixed(1);
-                        let formula = `(합산 ${sumText}억 - ${exText}억) × ${Math.round(c.jb*100)}%`;
-                        
-                        dHTMLs[s] += `<tr><td>${p.name.replace('(공동지분)','')}</td><td>${p.name.includes('(공동지분)')?'공동지분':oMap[p.owner]}</td><td>${p.isReg?'O':'-'}</td><td>${Math.round(gA).toLocaleString()}<br><span class='info-badge'>현실화 ${Math.round(c.r*100)}%</span></td><td>재산 ${Math.round(c.pt*100)}%<br>종부 ${Math.round(c.jb*100)}%</td><td>${formula}</td><td>${Math.round(gA*c.pt).toLocaleString()}</td><td>${Math.round(pR.total).toLocaleString()}</td><td>${Math.round(bJ).toLocaleString()}</td><td>${jR.rate}</td><td>${Math.round(jR.tax).toLocaleString()}<br><span class="text-[10px] text-slate-400 font-bold">(인별 총액)</span></td></tr>`;
+                        ptRowHTML += `<tr>
+                            <td>${a.name}</td>
+                            <td>${Math.round(d.ga * a.share).toLocaleString()}만<br><span class='formula-text'>공시가/0.69*${Math.round(d.realRatio*100)}%</span></td>
+                            <td>${Math.round(d.baseMan * a.share).toLocaleString()}만<br><span class='formula-text'>가액*비율(${Math.round(d.fmvr*100)}%)</span></td>
+                            <td>${Math.round(myPure).toLocaleString()}만<br><span class='formula-text'>${(d.appliedRate*100).toFixed(2)}% 누진적용</span></td>
+                            <td>${Math.round(myEdu).toLocaleString()}만<br><span class='formula-text'>본세*20%</span></td>
+                            <td>${Math.round(myCity).toLocaleString()}만<br><span class='formula-text'>과표*0.14%</span></td>
+                            <td class='total-highlight'>${Math.round(myTotal).toLocaleString()}만</td>
+                        </tr>`;
                     });
+
+                    let ex = is1H ? c.ex1 : c.exM;
+                    let jbBase = Math.max(0, (gaSum - ex) * c.jbRatio);
+                    
+                    let hvyType = c.ratesGen;
+                    if (scen === 'curr') hvyType = (rows.length >= 3 && jbBase > 120000) ? c.ratesHvy : c.ratesGen;
+                    else if (scen === 'past') hvyType = (rows.length >= 3 || (rows.length >= 2 && rows.some(r=>r.querySelector('.p-reg').value==='Y'))) ? c.ratesHvy : c.ratesGen;
+                    else {
+                        if (hLogic.includes('비거주')) hvyType = (rows.length >= 2 || rows.some(r=>r.querySelector('.p-res').value==='N')) ? c.ratesHvy : c.ratesGen;
+                        else if (hLogic.includes('조정지역')) hvyType = (rows.length >= 2 && rows.some(r=>r.querySelector('.p-reg').value==='Y')) ? c.ratesHvy : c.ratesGen;
+                        else if (hLogic.includes('2주택')) hvyType = rows.length >= 2 ? c.ratesHvy : c.ratesGen;
+                        else hvyType = rows.length >= 3 ? c.ratesHvy : c.ratesGen;
+                    }
+
+                    const jbR = getJB(jbBase, hvyType);
+                    const dup = jbBase > 0 ? ptPureSum * ((gaSum - ex)*0.6 / ptBaseSum) : 0;
+                    let netJb = Math.max(0, jbR.base_tax - dup);
+
+                    let cTxt = "-"; let cAmt = 0;
+                    if (is1H && jbBase > 0) {
+                        let holdY = 0;
+                        if(oA[0].date) { holdY = Math.floor((new Date(2026,5,1).getTime() - new Date(oA[0].date).getTime()) / (1000*3600*24*365.25)); }
+                        let ageC = ages[owner] >= 70 ? 0.4 : (ages[owner] >= 65 ? 0.3 : (ages[owner] >= 60 ? 0.2 : 0));
+                        let holdC = holdY >= 15 ? 0.5 : (holdY >= 10 ? 0.4 : (holdY >= 5 ? 0.2 : 0));
+                        let tR = Math.min(c.creditMax, ageC + holdC); 
+                        if (tR > 0) { cAmt = netJb * tR; netJb -= cAmt; cTxt = `<span class="info-badge">-${Math.round(tR*100)}%</span><br><span class="text-[9px] text-slate-400">보유${holdY}년/연령합산</span>`; } 
+                        else { cTxt = `<span class="text-[10px] text-slate-400">적용불가<br>(보유${holdY}년/${ages[owner]}세)</span>`; }
+                    } else if (!is1H && jbBase > 0) { cTxt = `<span class="text-[10px] text-slate-400">다주택 배제</span>`; }
+
+                    const finalJb = netJb * 1.2;
+                    summary[owner][scen] = ptTotal + finalJb; summary[owner][scen+'_pt'] = ptTotal; summary[owner][scen+'_jb'] = finalJb;
+                    
+                    if(!summary.household[scen]) { summary.household[scen]=0; summary.household[scen+'_pt']=0; summary.household[scen+'_jb']=0; }
+                    summary.household[scen] += (ptTotal + finalJb); summary.household[scen+'_pt'] += ptTotal; summary.household[scen+'_jb'] += finalJb;
+                    
+                    const sTitle = scen === 'curr' ? "🔵 현재 시나리오 (2026.03 현행법)" : scen === 'past' ? "🔴 과거 시나리오 (2021년 최고점)" : "🟠 미래 시나리오 (변수 커스텀 & 2021년 산식 적용)";
+                    detailHTML += `
+                    <div class='mb-6 p-5 border-2 ${scen==='curr'?'border-blue-100':scen==='past'?'border-red-100':'border-orange-100'} rounded-2xl bg-white shadow-sm'>
+                        <h4 class='font-black text-md mb-4'>${sTitle}</h4>
+                        <h5 class='text-xs font-black text-slate-500 mb-2'>① 재산세 3단 분리 산출 (물건별)</h5>
+                        <div class='table-wrapper mb-6'><table class='criteria-table'><thead class='bg-slate-50'><tr><th>자산명</th><th>조정공시가</th><th>재산과표</th><th>재산본세</th><th>지방교육세</th><th>도시지역분</th><th>재산세합계</th></tr></thead><tbody>${ptRowHTML}</tbody></table></div>
+                        <h5 class='text-xs font-black text-slate-500 mb-2'>② 종합부동산세 역산 차감 (인별 합산)</h5>
+                        <div class='table-wrapper mb-4'><table class='criteria-table'><thead class='bg-slate-50'><tr><th>합산 공시가</th><th>공제액</th><th>종부과표</th><th>세율</th><th>종부본세</th><th>재산세차감</th><th>세액공제</th><th>최종 종부세(농특포함)</th></tr></thead><tbody><tr><td>${Math.round(gaSum).toLocaleString()}만</td><td class='text-red-500 font-bold'>-${ex.toLocaleString()}만</td><td>${Math.round(jbBase).toLocaleString()}만<br><span class='formula-text'>FMVR ${Math.round(c.jbRatio*100)}%</span></td><td>${jbR.rate}</td><td>${Math.round(jbR.base_tax).toLocaleString()}만</td><td class='text-blue-500 font-bold'>-${Math.round(dup).toLocaleString()}만</td><td>${cTxt}<br>${cAmt>0?'-'+Math.round(cAmt).toLocaleString()+'만':''}</td><td class='total-highlight text-red-600'>${Math.round(finalJb).toLocaleString()}만</td></tr></tbody></table></div>
+                        <div class="text-right bg-slate-50 p-4 rounded-xl border border-slate-200"><span class="text-sm font-black text-slate-600 mr-4">해당 시나리오 최종 납부 세액:</span><span class="text-2xl font-black text-slate-900">${Math.round(ptTotal + finalJb).toLocaleString()} 만원</span></div>
+                    </div>`;
                 });
-                const title = isMarried ? "👫 부부 합산" : (group[0] === 'husband' ? "👨 남편 명의" : "👩 아내 명의");
-                sHTML += `<div class="p-6 rounded-3xl bg-slate-50 border shadow-sm"><h4 class="font-black text-blue-800 mb-6 flex items-center"><span class="w-2 h-5 bg-blue-600 rounded-full mr-2"></span>${title}</h4><div class="space-y-4"><div class="bg-white p-4 rounded-2xl border border-blue-100"><div class="flex justify-between items-center mb-1"><span class="text-xs font-black text-blue-900 uppercase">현재 합계</span><b class="text-lg font-black text-blue-600">${Math.round(r.curr.pt + r.curr.jb).toLocaleString()}만</b></div><div class="text-[10px] text-slate-400 font-bold text-right">종부세 ${Math.round(r.curr.jb).toLocaleString()} / 재산세 ${Math.round(r.curr.pt).toLocaleString()}</div></div><div class="bg-white p-4 rounded-2xl border border-red-50"><div class="flex justify-between items-center mb-1"><span class="text-xs font-black text-red-900 uppercase">과거 최고점</span><b class="text-lg font-black text-red-600">${Math.round(r.past.pt + r.past.jb).toLocaleString()}만</b></div><div class="text-[10px] text-slate-400 font-bold text-right">종부세 ${Math.round(r.past.jb).toLocaleString()} / 재산세 ${Math.round(r.past.pt).toLocaleString()}</div></div><div class="bg-white p-4 rounded-2xl ring-2 ring-orange-500/10 border border-orange-200"><div class="flex justify-between items-center mb-1"><span class="text-xs font-black text-orange-900 uppercase">미래 강화</span><b class="text-lg font-black text-orange-600">${Math.round(r.futr.pt + r.futr.jb).toLocaleString()}만</b></div><div class="text-[10px] text-slate-400 font-bold text-right">종부세 ${Math.round(r.futr.jb).toLocaleString()} / 재산세 ${Math.round(r.futr.pt).toLocaleString()}</div></div></div></div>`;
+                detailHTML += `</div>`;
             });
 
-            document.getElementById('owner-results').innerHTML = sHTML;
-            document.getElementById('scenario-details-container').innerHTML = `
-                <div><h4 class="text-xs font-black text-blue-600 mb-4 uppercase tracking-widest">● 현재 (2026.03) 계산 과정</h4><div class="table-wrapper"><table class="criteria-table"><thead class="bg-slate-50">${thHTML}</thead><tbody>${dHTMLs.curr}</tbody></table></div></div>
-                <div><h4 class="text-xs font-black text-red-600 mb-4 uppercase tracking-widest">● 과거 최고점 (문 정부) 계산 과정</h4><div class="table-wrapper"><table class="criteria-table"><thead class="bg-slate-50">${thHTML}</thead><tbody>${dHTMLs.past}</tbody></table></div></div>
-                <div><h4 class="text-xs font-black text-orange-600 mb-4 uppercase tracking-widest">● 미래 강화 (예상) 계산 과정</h4><div class="table-wrapper"><table class="criteria-table"><thead class="bg-slate-50">${thHTML}</thead><tbody>${dHTMLs.futr}</tbody></table></div></div>`;
-            document.getElementById('result-area').classList.remove('hidden'); document.getElementById('detail-area').classList.remove('hidden');
+            document.getElementById('detailed-calculation-container').innerHTML = detailHTML;
+
+            const renderCard = (id, title, data, color) => {
+                document.getElementById(id).innerHTML = `
+                <div class="p-6 rounded-3xl bg-slate-50 border shadow-sm h-full flex flex-col justify-between">
+                    <h4 class="font-black text-${color}-800 mb-6 flex items-center text-lg"><span class="w-2 h-5 bg-${color}-600 rounded-full mr-2"></span>${title} 요약</h4>
+                    <div class="space-y-4">
+                        <div class="bg-white p-4 rounded-xl border border-${color}-100 flex justify-between items-center"><div><span class="text-[10px] font-black uppercase text-slate-400">현재 합계</span><br><b class="text-xl text-${color}-600">${Math.round(data.curr||0).toLocaleString()}만</b></div><div class="text-[10px] text-slate-400 text-right">종부 ${Math.round(data.curr_jb||0).toLocaleString()}<br>재산 ${Math.round(data.curr_pt||0).toLocaleString()}</div></div>
+                        <div class="bg-white p-4 rounded-xl border border-red-50 flex justify-between items-center"><div><span class="text-[10px] font-black uppercase text-slate-400">과거 최고점</span><br><b class="text-xl text-red-600">${Math.round(data.past||0).toLocaleString()}만</b></div><div class="text-[10px] text-slate-400 text-right">종부 ${Math.round(data.past_jb||0).toLocaleString()}<br>재산 ${Math.round(data.past_pt||0).toLocaleString()}</div></div>
+                        <div class="bg-white p-4 rounded-xl border border-orange-100 flex justify-between items-center"><div><span class="text-[10px] font-black uppercase text-slate-400">미래 예상</span><br><b class="text-xl text-orange-600">${Math.round(data.futr||0).toLocaleString()}만</b></div><div class="text-[10px] text-slate-400 text-right">종부 ${Math.round(data.futr_jb||0).toLocaleString()}<br>재산 ${Math.round(data.futr_pt||0).toLocaleString()}</div></div>
+                    </div>
+                </div>`;
+            };
+
+            renderCard('res-husband', '👨 남편', summary.husband, 'blue');
+            renderCard('res-wife', '👩 아내', summary.wife, 'pink');
+            renderCard('res-household', '🏠 가계 통합', summary.household, 'slate');
         }
     </script>
 </body>
