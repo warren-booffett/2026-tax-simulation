@@ -416,7 +416,7 @@
 
                 detailHTML += `<div class='mb-12'><h3 class='text-xl font-black mb-4 border-l-4 border-blue-600 pl-3'>👤 ${owner==='husband'?'남편 명의':'아내 명의'} 상세 명세</h3>`;
                 
-['curr', 'past', 'futr'].forEach(scen => {
+                ['curr', 'past', 'futr'].forEach(scen => {
                     const c = sVars[scen];
                     const is1H = (isMarried ? rows.length === 1 : oA.length === 1);
                     let ptTotal = 0, ptPureSum = 0, ptBaseSum = 0, gaSum = 0, ptRowHTML = '';
@@ -446,6 +446,7 @@
                     let ex = is1H ? c.ex1 : c.exM;
                     let jbBase = Math.max(0, (gaSum - ex) * c.jbRatio);
                     
+                    // [핵심 변경] 중과세율 여부(isHeavy) 판별 추가
                     let hvyType = c.ratesGen;
                     let isHeavy = false;
                     if (scen === 'curr') { hvyType = (rows.length >= 3 && jbBase > 120000) ? c.ratesHvy : c.ratesGen; isHeavy = (rows.length >= 3 && jbBase > 120000); }
@@ -473,7 +474,7 @@
                         else { cTxt = `<span class="text-[0.6rem] text-slate-400">적용불가<br>(보유${holdY}년/${ages[owner]}세)</span>`; }
                     } else if (!is1H && jbBase > 0) { cTxt = `<span class="text-[0.6rem] text-slate-400">다주택 배제</span>`; }
 
-                    // 농특세 및 최종 금액 분리 산출
+                    // [핵심 변경] 농특세 및 최종 금액 분리 산출
                     let netJbAfterCredit = Math.max(0, taxBeforeCredit - cAmt);
                     let nongTeukTax = netJbAfterCredit * 0.2;
                     let finalJb = netJbAfterCredit + nongTeukTax;
@@ -484,11 +485,14 @@
                     summary.household[scen] += (ptTotal + finalJb); summary.household[scen+'_pt'] += ptTotal; summary.household[scen+'_jb'] += finalJb;
                     
                     const sTitle = scen === 'curr' ? "🔵 현재 시나리오 (2026.03 현행법)" : scen === 'past' ? "🔴 과거 시나리오 (2021년 최고점)" : "🟠 미래 시나리오 (변수 커스텀 & 2021년 산식 적용)";
+                    
+                    // [핵심 변경] 테이블 칼럼 확장 및 산식(Formula Text) 추가
                     detailHTML += `
                     <div class='mb-6 p-5 border-2 ${scen==='curr'?'border-blue-100':scen==='past'?'border-red-100':'border-orange-100'} rounded-2xl bg-white shadow-sm'>
                         <h4 class='font-black text-md mb-4'>${sTitle}</h4>
                         <h5 class='text-xs font-black text-slate-500 mb-2'>① 재산세 3단 분리 산출 (물건별)</h5>
                         <div class='table-wrapper mb-6'><table class='criteria-table'><thead class='bg-slate-50'><tr><th>자산명</th><th>조정공시가</th><th>재산과표</th><th>재산본세</th><th>지방교육세</th><th>도시지역분</th><th>재산세합계</th></tr></thead><tbody>${ptRowHTML}</tbody></table></div>
+                        
                         <h5 class='text-xs font-black text-slate-500 mb-2 mt-6'>② 종합부동산세 상세 산출 과정 (인별 합산)</h5>
                         <div class='table-wrapper mb-4'>
                             <table class='criteria-table'>
@@ -501,7 +505,7 @@
                                         <th>종부세 산출세액</th>
                                         <th>재산세 이중과세 차감</th>
                                         <th>1주택 세액공제</th>
-                                        <th class="bg-emerald-50">농어촌특별세 (20%)</th>
+                                        <th class="bg-emerald-50 text-emerald-800">농어촌특별세 (20%)</th>
                                         <th>최종 종부세 납부액</th>
                                     </tr>
                                 </thead>
@@ -523,6 +527,22 @@
                         <div class="text-right bg-slate-50 p-4 rounded-xl border border-slate-200"><span class="text-sm font-black text-slate-600 mr-4">해당 시나리오 최종 납부 세액 (재산세+종부세):</span><span class="text-2xl font-black text-slate-900">${Math.round(ptTotal + finalJb).toLocaleString()} 만원</span></div>
                     </div>`;
                 });
+                detailHTML += `</div>`;
+            });
+
+            document.getElementById('detailed-calculation-container').innerHTML = detailHTML;
+
+            const renderCard = (id, title, data, color) => {
+                document.getElementById(id).innerHTML = `
+                <div class="p-6 rounded-3xl bg-slate-50 border shadow-sm h-full flex flex-col justify-between">
+                    <h4 class="font-black text-${color}-800 mb-6 flex items-center text-lg"><span class="w-2 h-5 bg-${color}-600 rounded-full mr-2"></span>${title} 요약</h4>
+                    <div class="space-y-4">
+                        <div class="bg-white p-4 rounded-xl border border-${color}-100 flex justify-between items-center"><div><span class="text-[0.6rem] font-black uppercase text-slate-400">현재 합계</span><br><b class="text-xl text-${color}-600">${Math.round(data.curr||0).toLocaleString()}만</b></div><div class="text-[0.6rem] text-slate-400 text-right">종부 ${Math.round(data.curr_jb||0).toLocaleString()}<br>재산 ${Math.round(data.curr_pt||0).toLocaleString()}</div></div>
+                        <div class="bg-white p-4 rounded-xl border border-red-50 flex justify-between items-center"><div><span class="text-[0.6rem] font-black uppercase text-slate-400">과거 최고점</span><br><b class="text-xl text-red-600">${Math.round(data.past||0).toLocaleString()}만</b></div><div class="text-[0.6rem] text-slate-400 text-right">종부 ${Math.round(data.past_jb||0).toLocaleString()}<br>재산 ${Math.round(data.past_pt||0).toLocaleString()}</div></div>
+                        <div class="bg-white p-4 rounded-xl border border-orange-100 flex justify-between items-center"><div><span class="text-[0.6rem] font-black uppercase text-slate-400">미래 예상</span><br><b class="text-xl text-orange-600">${Math.round(data.futr||0).toLocaleString()}만</b></div><div class="text-[0.6rem] text-slate-400 text-right">종부 ${Math.round(data.futr_jb||0).toLocaleString()}<br>재산 ${Math.round(data.futr_pt||0).toLocaleString()}</div></div>
+                    </div>
+                </div>`;
+            };
 
             renderCard('res-husband', '👨 남편', summary.husband, 'blue');
             renderCard('res-wife', '👩 아내', summary.wife, 'pink');
@@ -536,7 +556,7 @@
         document.addEventListener('input', function(e) { if (isSimulationStarted && (e.target.tagName === 'INPUT' || e.target.tagName === 'SELECT')) calculate(); });
         document.addEventListener('change', function(e) { if (isSimulationStarted && (e.target.tagName === 'INPUT' || e.target.tagName === 'SELECT')) calculate(); });
 
-        // --- [수정] 마우스 휠 확대/축소 기능 (초기값을 0.85로 세팅) ---
+        // --- 마우스 휠 확대/축소 기능 ---
         let currentZoom = 0.85; 
         window.addEventListener('wheel', function(e) {
             if (e.ctrlKey || e.metaKey) {
