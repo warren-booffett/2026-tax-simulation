@@ -5,8 +5,11 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>[워렌부핏's 보유세 시뮬레이터] V2.0</title>
     <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
     <style>
         @import url('https://fonts.googleapis.com/css2?family=Pretendard:wght@400;600;700;900&display=swap');
+        /* [수정] 첫 화면 크기를 원래대로 콤팩트하게 보이도록 기본 폰트 사이즈 85%로 축소 */
+        html { font-size: 70%; } 
         body { font-family: 'Pretendard', sans-serif; background-color: #f8fafc; color: #1e293b; letter-spacing: -0.02em; }
         .card { background: white; border-radius: 24px; box-shadow: 0 10px 25px -5px rgba(0,0,0,0.04); padding: 30px; border: 1px solid #f1f5f9; margin-bottom: 2rem; }
         input, select { border: 1.5px solid #e2e8f0; padding: 12px; border-radius: 10px; width: 100%; transition: all 0.2s; font-size: 0.95rem; font-weight: 700; color: #1e293b; }
@@ -39,7 +42,7 @@
         <header class="mb-8 text-center">
             <div class="inline-block px-4 py-1 rounded-full bg-blue-100 text-blue-700 text-xs font-black mb-4 uppercase tracking-widest">FOR 월급쟁이부자들</div>
             <h1 class="text-4xl md:text-5xl font-black text-slate-900 tracking-tighter mb-4">🏠 워렌부핏's 보유세 시뮬레이터</h1>
-            <p class="text-slate-500 font-bold mb-6">미래 보유세 리스크가 얼마나 큰지 계산해보세요.</p>
+            <p class="text-slate-500 font-bold mb-6"> 감당 가능한 체력을 미리 계산해보세요.</p>
             
             <div class="flex flex-wrap justify-center gap-3 mb-4">
                 <a href="https://weolbu.com/s/LwMrcfsAhy" target="_blank" class="px-5 py-2.5 bg-slate-800 text-white rounded-xl text-sm font-bold shadow-md hover:bg-slate-700 transition flex items-center gap-2">📖 사용법 설명 가이드</a>
@@ -48,28 +51,29 @@
             </div>
         </header>
 
-        <div class="card bg-slate-50 border-slate-200 mb-8 p-6 md:p-8">
-            <h3 class="text-xl font-black text-slate-800 mb-4 flex items-center">📝 업데이트 노트 (V1.0 ➔ V2.0)</h3>
-            
-            <div class="grid md:grid-cols-2 gap-6">
-                <div>
-                    <h4 class="text-sm font-black text-blue-600 mb-2">[신규 기능 추가]</h4>
-                    <ul class="text-[0.9rem] text-slate-700 space-y-2 font-bold">
-                        <li>✅ <b class="text-slate-900">가계 통합 리포트:</b> 남편과 아내의 세금을 합쳐서 우리 집 총액을 한눈에 보여줍니다.</li>                
-                        <li>✅ <b class="text-slate-900">나이/기간별 세액공제:</b> 나이와 집 보유 기간을 자동으로 계산해 종부세 할인 혜택을 찾아줍니다.</li>
-                    </ul>
-                </div>
-                <div>
-                    <h4 class="text-sm font-black text-red-600 mb-2">[기존 오류 수정 및 정밀화]</h4>
-                    <ul class="text-[0.9rem] text-slate-700 space-y-2 font-bold">
-                        <li>🛠 <b class="text-slate-900">도시지역분 누락 해결:</b> 기존 계산기에서 누락되었던 '도시지역분(과표의 0.14%)'을 추가하여 실제 고지서 세금과 일치시켰습니다.</li>
-                        <li>🛠 <b class="text-slate-900">고지서 분리표시:</b> 재산세를 3단(본세/교육세/도시분)으로 분리 명시했습니다.</li>
-                        <li>🛠 <b class="text-slate-900">이중과세 차감 오류 수정:</b> 종부세에서 재산세를 뺄 때, 전문 세무 산식(공정비율 역산 분수식)을 적용해 오차를 줄였습니다.</li>
-                    </ul>
-                </div>
-            </div>
+<div class="card bg-slate-50 border-slate-200 mb-8 p-6 md:p-8">
+    <h3 class="text-xl font-black text-slate-800 mb-4 flex items-center">📝 업데이트 노트 (V2.0)</h3>
+    
+    <div class="grid md:grid-cols-2 gap-6">
+        <div>
+            <h4 class="text-sm font-black text-blue-600 mb-2">[일부 계산기준 수정 및 개선]</h4>
+            <ul class="text-[0.9rem] text-slate-700 space-y-2 font-bold">
+                <li>🛠 <b class="text-slate-900">세목 누락 해결:</b> 도시지역분(0.14%) 및 지방교육세를 포함하여 실납부액 오차를 최소화했습니다.</li>
+                <li>🛠 <b class="text-slate-900">이중과세 수정:</b> 종부세 내 재산세 차감 시 전문 역산 산식을 적용하여 정확도를 높였습니다.</li>
+            </ul>
         </div>
-
+        <div>
+            <h4 class="text-sm font-black text-red-600 mb-2">[신규 편의 기능 추가]</h4>
+            <ul class="text-[0.9rem] text-slate-700 space-y-2 font-bold">
+                <li>✅ <b class="text-slate-900">가계 통합 리포트:</b> 남편/아내 세금을 합산하여 가구당 총 세액 산출 기능을 추가했습니다.</li>                
+                <li>✅ <b class="text-slate-900">정밀 세액공제:</b> 나이와 보유 기간을 일단위로 계산하여 고령자/장기보유 공제를 자동 적용합니다.</li>
+                <li>✅ <b class="text-slate-900">영역별 캡처 기능:</b> [요약 카드]와 [상세 계산과정] 개별 캡처가 가능합니다.</li>
+                <li>✅ <b class="text-slate-900">엑셀/PPT 표 복사:</b> 표 구조 그대로 클립보드에 복사되어, 엑셀에 붙여넣기만 하면 바로 응용 가능합니다.</li>
+                <li>✅ <b class="text-slate-900">실시간 자동 연동:</b> 입력값을 바꾸는 즉시 모든 결과값이 실시간으로 갱신됩니다.</li>
+            </ul>
+        </div>
+    </div>
+</div>
         <div class="grid grid-cols-1 lg:grid-cols-3 gap-8 mb-8">
             <div class="card lg:col-span-1 border-t-8 border-t-blue-600">
                 <h2 class="text-xl font-black mb-6 flex items-center">⚙️ 미래 변수 설정 (숫자 입력)</h2>
@@ -91,7 +95,7 @@
                             <label class="text-xs font-black text-emerald-800">1주택 세액공제 한도 (%)</label>
                             <input type="number" id="future-credit" value="80" class="w-24 text-right !p-2 text-emerald-600" oninput="updateDynamicTable()">
                         </div>
-                        <p class="text-[10.5px] text-emerald-700 font-bold leading-relaxed mt-2">
+                        <p class="text-[0.65rem] text-emerald-700 font-bold leading-relaxed mt-2">
                             * <b class="text-emerald-900">1세대 1주택자</b>에게만 적용되는 연령 및 장기보유 세액공제 혜택입니다.<br>
                             * 현행 세법 기준 최대 <b class="text-emerald-900">80%</b>까지 할인받을 수 있습니다.<br>
                             * 미래에 이 혜택이 축소되거나 아예 폐지되는 최악의 상황을 가정하고 싶다면 <b class="text-emerald-900">숫자 0</b>을 입력해 보세요.
@@ -117,30 +121,30 @@
                 <h2 class="text-2xl font-black text-slate-900">01. 자산 포트폴리오 입력</h2>
                 <div class="flex flex-wrap items-center gap-4">
                     <div class="flex items-center space-x-2 bg-slate-50 px-4 py-2 rounded-xl border border-slate-200">
-                        <span class="text-[11px] font-bold text-slate-600">남편 나이</span>
+                        <span class="text-[0.7rem] font-bold text-slate-600">남편 나이</span>
                         <input type="number" id="age-husband" value="32" class="w-16 h-8 text-center text-sm !p-0">
                     </div>
                     <div class="flex items-center space-x-2 bg-slate-50 px-4 py-2 rounded-xl border border-slate-200">
-                        <span class="text-[11px] font-bold text-slate-600">아내 나이</span>
+                        <span class="text-[0.7rem] font-bold text-slate-600">아내 나이</span>
                         <input type="number" id="age-wife" value="32" class="w-16 h-8 text-center text-sm !p-0">
                     </div>
                     <div class="flex items-center space-x-2 bg-blue-50 px-4 py-2 rounded-xl border border-blue-100">
-                        <span class="text-[11px] font-bold text-blue-900">혼인신고(1세대)</span>
-                        <input type="checkbox" id="marriage-status" checked class="w-5 h-5 accent-blue-600 cursor-pointer">
+                        <span class="text-[0.7rem] font-bold text-blue-900">혼인신고(1세대)</span>
+                        <input type="checkbox" id="marriage-status" class="w-5 h-5 accent-blue-600 cursor-pointer">
                     </div>
                 </div>
             </div>
             
             <div id="asset-inputs" class="space-y-4">
                 <div class="grid grid-cols-1 md:grid-cols-12 gap-2 asset-row p-4 border rounded-2xl bg-slate-50/50 hover:bg-white transition items-center">
-                    <div class="md:col-span-2"><label class="text-[9px] font-bold text-slate-400 mb-1 block uppercase">물건명</label><input type="text" value="구리 아파트" class="p-name !p-2 !text-sm"></div>
-                    <div class="md:col-span-2"><label class="text-[9px] font-bold text-slate-400 mb-1 block uppercase">소유주</label>
-                        <select class="p-owner !p-2 !text-sm"><option value="husband">남편</option><option value="wife">아내</option><option value="joint" selected>공동명의</option></select>
+                    <div class="md:col-span-2"><label class="text-[0.55rem] font-bold text-slate-400 mb-1 block uppercase">물건명</label><input type="text" value="구리 아파트" class="p-name !p-2 !text-sm"></div>
+                    <div class="md:col-span-2"><label class="text-[0.55rem] font-bold text-slate-400 mb-1 block uppercase">소유주</label>
+                        <select class="p-owner !p-2 !text-sm"><option value="husband" selected>남편</option><option value="wife">아내</option><option value="joint">공동명의</option></select>
                     </div>
-                    <div class="md:col-span-2"><label class="text-[9px] font-bold text-slate-400 mb-1 block uppercase">공시가격(만원)</label><input type="number" value="54000" class="p-price text-blue-700 !p-2 !text-sm"></div>
-                    <div class="md:col-span-2"><label class="text-[9px] font-bold text-slate-400 mb-1 block uppercase">취득일</label><input type="date" value="2024-03-01" class="p-date !p-2 !text-xs text-slate-600"></div>
-                    <div class="md:col-span-1"><label class="text-[9px] font-bold text-slate-400 mb-1 block uppercase">조정지역</label><select class="p-reg !p-2 !text-sm"><option value="N">비조정</option><option value="Y" selected>조정지역</select></div>
-                    <div class="md:col-span-2"><label class="text-[9px] font-bold text-slate-400 mb-1 block uppercase">실거주</label><select class="p-res !p-2 !text-sm"><option value="Y">실거주</option><option value="N" selected>비거주</option></select></div>
+                    <div class="md:col-span-2"><label class="text-[0.55rem] font-bold text-slate-400 mb-1 block uppercase">공시가격(만원)</label><input type="number" value="54000" class="p-price text-blue-700 !p-2 !text-sm"></div>
+                    <div class="md:col-span-2"><label class="text-[0.55rem] font-bold text-slate-400 mb-1 block uppercase">취득일</label><input type="date" value="2024-03-01" class="p-date !p-2 !text-xs text-slate-600"></div>
+                    <div class="md:col-span-1"><label class="text-[0.55rem] font-bold text-slate-400 mb-1 block uppercase">조정지역</label><select class="p-reg !p-2 !text-sm"><option value="N" selected>비조정</option><option value="Y">조정</option></select></div>
+                    <div class="md:col-span-2"><label class="text-[0.55rem] font-bold text-slate-400 mb-1 block uppercase">실거주</label><select class="p-res !p-2 !text-sm"><option value="Y">실거주</option><option value="N" selected>비거주</option></select></div>
                     <div class="md:col-span-1 flex items-end"><button onclick="removeRow(this)" class="w-full bg-white text-slate-300 font-bold py-2 rounded-lg border border-slate-200 hover:text-red-500 hover:bg-red-50 transition">✕</button></div>
                 </div>
             </div>
@@ -150,23 +154,47 @@
             </div>
         </div>
 
-        <div id="result-area" class="reveal-hidden">
-            <div class="card border-2 border-blue-600 bg-white">
-                <h2 class="text-2xl font-black mb-10 text-slate-900 border-b pb-4 text-center">02. 계산 결과 요약</h2>
-                <div class="grid grid-cols-1 xl:grid-cols-11 gap-4 items-center">
-                    <div id="res-husband" class="xl:col-span-3"></div>
-                    <div class="hidden xl:flex equation-symbol xl:col-span-1">+</div>
-                    <div id="res-wife" class="xl:col-span-3"></div>
-                    <div class="hidden xl:flex equation-symbol xl:col-span-1">=</div>
-                    <div id="res-household" class="xl:col-span-3"></div>
+        <div id="result-area" class="reveal-hidden space-y-8">
+            
+            <div class="card relative bg-white border-2 border-blue-600">
+                <div class="flex flex-col lg:flex-row justify-between items-start lg:items-center border-b pb-4 mb-8">
+                    <h2 class="text-2xl font-black text-slate-900 mb-4 lg:mb-0">02. 계산 결과 요약</h2>
+                    <div class="flex flex-wrap gap-2">
+                        <button onclick="copyToExcelSummary()" class="px-4 py-2 bg-emerald-100 text-emerald-800 hover:bg-emerald-200 text-xs font-black rounded-lg transition shadow-sm border border-emerald-200">📊 요약 표 복사</button>
+                        <button onclick="exportToImage('copy', 'capture-target-summary')" class="px-4 py-2 bg-slate-800 text-white hover:bg-slate-700 text-xs font-black rounded-lg transition shadow-sm">📋 화면 캡쳐(복사)</button>
+                        <button onclick="exportToImage('save', 'capture-target-summary')" class="px-4 py-2 bg-slate-800 text-white hover:bg-slate-700 text-xs font-black rounded-lg transition shadow-sm">💾 화면 캡쳐(저장)</button>
+                    </div>
+                </div>
+                
+                <div id="capture-target-summary" class="bg-white">
+                    <div class="grid grid-cols-1 xl:grid-cols-11 gap-4 items-center">
+                        <div id="res-husband" class="xl:col-span-3"></div>
+                        <div class="hidden xl:flex equation-symbol xl:col-span-1">+</div>
+                        <div id="res-wife" class="xl:col-span-3"></div>
+                        <div class="hidden xl:flex equation-symbol xl:col-span-1">=</div>
+                        <div id="res-household" class="xl:col-span-3"></div>
+                    </div>
                 </div>
             </div>
 
-            <div class="card mb-8">
-                <h2 class="text-2xl font-black mb-4 text-slate-900">🔍 03. 인별/세목별 상세 산출 과정</h2>
-                <p class="text-sm font-bold text-slate-500 mb-8">※ 재산세 3단 분리(본세/교육/도시) 및 종부세 중복분 차감 역산 공식이 적용된 투명화 리포트입니다.</p>
-                <div class="space-y-12" id="detailed-calculation-container"></div>
+            <div class="card relative">
+                <div class="flex flex-col lg:flex-row justify-between items-start lg:items-center border-b pb-4 mb-8">
+                    <div>
+                        <h2 class="text-2xl font-black text-slate-900 mb-2">🔍 03. 인별/세목별 상세 산출 과정</h2>
+                        <p class="text-sm font-bold text-slate-500">※ 재산세 3단 분리 및 종부세 중복분 차감 역산 공식이 적용된 투명화 리포트입니다.</p>
+                    </div>
+                    <div class="flex flex-wrap gap-2 mt-4 lg:mt-0">
+                        <button onclick="copyToExcelDetail()" class="px-4 py-2 bg-emerald-100 text-emerald-800 hover:bg-emerald-200 text-xs font-black rounded-lg transition shadow-sm border border-emerald-200">📊 상세 표 복사</button>
+                        <button onclick="exportToImage('copy', 'capture-target-detail')" class="px-4 py-2 bg-slate-800 text-white hover:bg-slate-700 text-xs font-black rounded-lg transition shadow-sm">📋 화면 캡쳐(복사)</button>
+                        <button onclick="exportToImage('save', 'capture-target-detail')" class="px-4 py-2 bg-slate-800 text-white hover:bg-slate-700 text-xs font-black rounded-lg transition shadow-sm">💾 화면 캡쳐(저장)</button>
+                    </div>
+                </div>
+                
+                <div id="capture-target-detail" class="bg-white">
+                    <div class="space-y-12" id="detailed-calculation-container"></div>
+                </div>
             </div>
+            
         </div>
 
         <div class="card">
@@ -194,7 +222,7 @@
                 <div class="table-wrapper border-2 border-blue-100 shadow-sm rounded-xl">
                     <table class="rate-table">
                         <thead class="bg-blue-50">
-                            <tr><th colspan="3" class="text-blue-800 text-[13px]">🔵 현재 (2026.03 현행) 종부세율</th></tr>
+                            <tr><th colspan="3" class="text-blue-800 text-[0.8rem]">🔵 현재 (2026.03 현행) 종부세율</th></tr>
                             <tr><th>과세표준 구간</th><th class="text-blue-600">일반</th><th class="text-blue-600 border-l border-blue-100">중과</th></tr>
                         </thead>
                         <tbody>
@@ -212,7 +240,7 @@
                 <div class="table-wrapper border-2 border-red-100 shadow-sm rounded-xl">
                     <table class="rate-table">
                         <thead class="bg-red-50">
-                            <tr><th colspan="3" class="text-red-800 text-[13px]">🔴 과거 (2021년 최고점) 종부세율</th></tr>
+                            <tr><th colspan="3" class="text-red-800 text-[0.8rem]">🔴 과거 (2021년 최고점) 종부세율</th></tr>
                             <tr><th>과세표준 구간</th><th class="text-red-600">일반</th><th class="text-red-600 border-l border-red-100">중과</th></tr>
                         </thead>
                         <tbody>
@@ -230,8 +258,8 @@
                 <div class="table-wrapper border-2 border-orange-200 shadow-sm rounded-xl">
                     <table class="rate-table">
                         <thead class="bg-orange-50">
-                            <tr><th colspan="3" class="text-orange-800 text-[13px]">🟠 미래 시뮬레이션 종부세율 (과거기준 적용)</th></tr>
-                            <tr><th>과세표준 구간</th><th class="text-orange-600">일반</th><th class="text-orange-600 border-l border-orange-200">중과 <br><span class="text-[10px] text-orange-500 font-bold" id="tbl-fut-rate-logic">(비거주 포함 시)</span></th></tr>
+                            <tr><th colspan="3" class="text-orange-800 text-[0.8rem]">🟠 미래 시뮬레이션 종부세율 (과거기준 적용)</th></tr>
+                            <tr><th>과세표준 구간</th><th class="text-orange-600">일반</th><th class="text-orange-600 border-l border-orange-200">중과 <br><span class="text-[0.6rem] text-orange-500 font-bold" id="tbl-fut-rate-logic">(비거주 포함 시)</span></th></tr>
                         </thead>
                         <tbody>
                             <tr><td>3억 원 이하</td><td>0.6%</td><td class="border-l border-orange-100 bg-orange-50/50 text-orange-700">1.2%</td></tr>
@@ -266,12 +294,12 @@
             </div>
         </div>
     </div>
-
-
     
-<script>
-        // --- [추가] 시뮬레이션 실행 상태 추적 변수 ---
+    <script>
+        // --- 시뮬레이션 상태 및 엑셀 수출용 데이터 추적 변수 ---
         let isSimulationStarted = false; 
+        let lastSummaryData = null; 
+        let lastDetailData = [];
 
         // 1. 유틸리티 함수
         function safeNum(v) { return Number(v.toString().replace(/[^0-9.-]+/g, "")) || 0; }
@@ -284,12 +312,11 @@
         function removeRow(btn) { 
             if(document.querySelectorAll('.asset-row').length > 1) { 
                 btn.closest('.asset-row').remove(); 
-                // [추가] 행이 삭제될 때도 실시간으로 재계산 반영
                 if (isSimulationStarted) calculate(); 
             }
         }
 
-        // 실시간 기준표 업데이트 함수 (버튼 안 눌러도 즉시 작동)
+        // 실시간 기준표 업데이트 함수
         function updateDynamicTable() {
             document.getElementById('tbl-fut-real').innerText = document.getElementById('future-real').value + '%';
             document.getElementById('tbl-fut-ratio').innerText = document.getElementById('future-ratio').value + '%';
@@ -303,7 +330,6 @@
             const logicText = document.querySelector('input[name="heavy-logic"]:checked').value;
             document.getElementById('tbl-fut-logic').innerText = logicText;
             
-            // 미래 세율표 괄호 안의 글자만 추출 (예: '비거주(투자용) 포함 시')
             const shortLogic = logicText.split(" 무조건")[0];
             document.getElementById('tbl-fut-rate-logic').innerText = "(" + shortLogic + ")";
         }
@@ -351,10 +377,9 @@
 
         // 4. 메인 시뮬레이션 엔진
         function calculate() {
-            // [추가] 시뮬레이션 버튼이 한 번이라도 눌렸음을 기록
             isSimulationStarted = true; 
+            lastDetailData = []; // 초기화
 
-            // 결과창 멋지게 등장
             const resArea = document.getElementById('result-area');
             resArea.classList.remove('reveal-hidden');
             resArea.classList.add('reveal-visible');
@@ -400,6 +425,12 @@
                         const myPure = d.purePT * a.share, myEdu = d.edu * a.share, myCity = d.city * a.share, myTotal = d.total * a.share;
                         ptTotal += myTotal; ptPureSum += myPure; ptBaseSum += (d.baseMan * a.share); gaSum += (d.ga * a.share);
                         
+                        // 엑셀 상세 테이블용 데이터 푸시
+                        lastDetailData.push({
+                            scenario: scen, owner: owner, name: a.name, ga: d.ga * a.share, 
+                            baseMan: d.baseMan * a.share, purePT: myPure, edu: myEdu, city: myCity, total: myTotal
+                        });
+
                         ptRowHTML += `<tr>
                             <td>${a.name}</td>
                             <td>${Math.round(d.ga * a.share).toLocaleString()}만<br><span class='formula-text'>공시가/0.69*${Math.round(d.realRatio*100)}%</span></td>
@@ -435,9 +466,9 @@
                         let ageC = ages[owner] >= 70 ? 0.4 : (ages[owner] >= 65 ? 0.3 : (ages[owner] >= 60 ? 0.2 : 0));
                         let holdC = holdY >= 15 ? 0.5 : (holdY >= 10 ? 0.4 : (holdY >= 5 ? 0.2 : 0));
                         let tR = Math.min(c.creditMax, ageC + holdC); 
-                        if (tR > 0) { cAmt = netJb * tR; netJb -= cAmt; cTxt = `<span class="info-badge">-${Math.round(tR*100)}%</span><br><span class="text-[9px] text-slate-400">보유${holdY}년/연령합산</span>`; } 
-                        else { cTxt = `<span class="text-[10px] text-slate-400">적용불가<br>(보유${holdY}년/${ages[owner]}세)</span>`; }
-                    } else if (!is1H && jbBase > 0) { cTxt = `<span class="text-[10px] text-slate-400">다주택 배제</span>`; }
+                        if (tR > 0) { cAmt = netJb * tR; netJb -= cAmt; cTxt = `<span class="info-badge">-${Math.round(tR*100)}%</span><br><span class="text-[0.55rem] text-slate-400">보유${holdY}년/연령합산</span>`; } 
+                        else { cTxt = `<span class="text-[0.6rem] text-slate-400">적용불가<br>(보유${holdY}년/${ages[owner]}세)</span>`; }
+                    } else if (!is1H && jbBase > 0) { cTxt = `<span class="text-[0.6rem] text-slate-400">다주택 배제</span>`; }
 
                     const finalJb = netJb * 1.2;
                     summary[owner][scen] = ptTotal + finalJb; summary[owner][scen+'_pt'] = ptTotal; summary[owner][scen+'_jb'] = finalJb;
@@ -466,9 +497,9 @@
                 <div class="p-6 rounded-3xl bg-slate-50 border shadow-sm h-full flex flex-col justify-between">
                     <h4 class="font-black text-${color}-800 mb-6 flex items-center text-lg"><span class="w-2 h-5 bg-${color}-600 rounded-full mr-2"></span>${title} 요약</h4>
                     <div class="space-y-4">
-                        <div class="bg-white p-4 rounded-xl border border-${color}-100 flex justify-between items-center"><div><span class="text-[10px] font-black uppercase text-slate-400">현재 합계</span><br><b class="text-xl text-${color}-600">${Math.round(data.curr||0).toLocaleString()}만</b></div><div class="text-[10px] text-slate-400 text-right">종부 ${Math.round(data.curr_jb||0).toLocaleString()}<br>재산 ${Math.round(data.curr_pt||0).toLocaleString()}</div></div>
-                        <div class="bg-white p-4 rounded-xl border border-red-50 flex justify-between items-center"><div><span class="text-[10px] font-black uppercase text-slate-400">과거 최고점</span><br><b class="text-xl text-red-600">${Math.round(data.past||0).toLocaleString()}만</b></div><div class="text-[10px] text-slate-400 text-right">종부 ${Math.round(data.past_jb||0).toLocaleString()}<br>재산 ${Math.round(data.past_pt||0).toLocaleString()}</div></div>
-                        <div class="bg-white p-4 rounded-xl border border-orange-100 flex justify-between items-center"><div><span class="text-[10px] font-black uppercase text-slate-400">미래 예상</span><br><b class="text-xl text-orange-600">${Math.round(data.futr||0).toLocaleString()}만</b></div><div class="text-[10px] text-slate-400 text-right">종부 ${Math.round(data.futr_jb||0).toLocaleString()}<br>재산 ${Math.round(data.futr_pt||0).toLocaleString()}</div></div>
+                        <div class="bg-white p-4 rounded-xl border border-${color}-100 flex justify-between items-center"><div><span class="text-[0.6rem] font-black uppercase text-slate-400">현재 합계</span><br><b class="text-xl text-${color}-600">${Math.round(data.curr||0).toLocaleString()}만</b></div><div class="text-[0.6rem] text-slate-400 text-right">종부 ${Math.round(data.curr_jb||0).toLocaleString()}<br>재산 ${Math.round(data.curr_pt||0).toLocaleString()}</div></div>
+                        <div class="bg-white p-4 rounded-xl border border-red-50 flex justify-between items-center"><div><span class="text-[0.6rem] font-black uppercase text-slate-400">과거 최고점</span><br><b class="text-xl text-red-600">${Math.round(data.past||0).toLocaleString()}만</b></div><div class="text-[0.6rem] text-slate-400 text-right">종부 ${Math.round(data.past_jb||0).toLocaleString()}<br>재산 ${Math.round(data.past_pt||0).toLocaleString()}</div></div>
+                        <div class="bg-white p-4 rounded-xl border border-orange-100 flex justify-between items-center"><div><span class="text-[0.6rem] font-black uppercase text-slate-400">미래 예상</span><br><b class="text-xl text-orange-600">${Math.round(data.futr||0).toLocaleString()}만</b></div><div class="text-[0.6rem] text-slate-400 text-right">종부 ${Math.round(data.futr_jb||0).toLocaleString()}<br>재산 ${Math.round(data.futr_pt||0).toLocaleString()}</div></div>
                     </div>
                 </div>`;
             };
@@ -476,22 +507,171 @@
             renderCard('res-husband', '👨 남편', summary.husband, 'blue');
             renderCard('res-wife', '👩 아내', summary.wife, 'pink');
             renderCard('res-household', '🏠 가계 통합', summary.household, 'slate');
+            
+            // 글로벌 변수 업데이트
+            lastSummaryData = summary;
         }
 
-        // --- [추가] 이벤트 위임(Event Delegation)을 통한 실시간 자동 계산 ---
-        // 사용자가 input, select, checkbox, radio 등 값을 변경할 때마다 감지
-        document.addEventListener('input', function(e) {
-            // 시뮬레이션이 시작된 상태에서만 동작하도록 제한
-            if (isSimulationStarted && (e.target.tagName === 'INPUT' || e.target.tagName === 'SELECT')) {
-                calculate();
-            }
-        });
+        // --- 실시간 계산 이벤트 위임 ---
+        document.addEventListener('input', function(e) { if (isSimulationStarted && (e.target.tagName === 'INPUT' || e.target.tagName === 'SELECT')) calculate(); });
+        document.addEventListener('change', function(e) { if (isSimulationStarted && (e.target.tagName === 'INPUT' || e.target.tagName === 'SELECT')) calculate(); });
 
-        document.addEventListener('change', function(e) {
-            if (isSimulationStarted && (e.target.tagName === 'INPUT' || e.target.tagName === 'SELECT')) {
-                calculate();
+        // --- [수정] 마우스 휠 확대/축소 기능 (초기값을 0.85로 세팅) ---
+        let currentZoom = 0.85; 
+        window.addEventListener('wheel', function(e) {
+            if (e.ctrlKey || e.metaKey) {
+                e.preventDefault();
+                if (e.deltaY < 0) currentZoom += 0.05;
+                else currentZoom -= 0.05;
+                currentZoom = Math.max(0.7, Math.min(currentZoom, 2.0));
+                document.documentElement.style.fontSize = (currentZoom * 100) + '%';
             }
-        });
+        }, { passive: false });
+
+        // --- 캡쳐 이미지 저장/복사 기능 ---
+        function exportToImage(action, targetId) {
+            if (!isSimulationStarted) { alert("먼저 시뮬레이션을 실행해주세요."); return; }
+            
+            const target = document.getElementById(targetId);
+            // 캡쳐 여백 강제 조정 (잘림 방지)
+            const originalPadding = target.style.padding;
+            target.style.padding = '24px';
+            
+            html2canvas(target, { scale: 2, backgroundColor: '#f8fafc' }).then(canvas => {
+                target.style.padding = originalPadding; // 원상복구
+                
+                if (action === 'save') {
+                    const link = document.createElement('a');
+                    link.download = `보유세_${targetId}.png`;
+                    link.href = canvas.toDataURL('image/png');
+                    link.click();
+                } else if (action === 'copy') {
+                    canvas.toBlob(blob => {
+                        try {
+                            const item = new ClipboardItem({ 'image/png': blob });
+                            navigator.clipboard.write([item]).then(() => alert('✅ 이미지가 클립보드에 복사되었습니다. 보고서에 붙여넣기(Ctrl+V) 하세요!'));
+                        } catch (err) { alert('현재 브라우저가 이미지 직접 복사를 지원하지 않습니다. [저장] 버튼을 이용해주세요.'); }
+                    });
+                }
+            });
+        }
+
+        // --- 엑셀 요약 표 복사 (종부/재산 분리형) ---
+        function copyToExcelSummary() {
+            if (!lastSummaryData) { alert("먼저 시뮬레이션을 실행해주세요."); return; }
+            const d = lastSummaryData;
+            
+            let tableHTML = `
+                <table border="1" style="border-collapse: collapse; text-align: center; font-family: sans-serif; font-size: 14px;">
+                    <tr style="background-color: #f1f5f9;">
+                        <th style="padding: 10px;">소유주</th>
+                        <th style="padding: 10px;">세목</th>
+                        <th style="padding: 10px;">현재 현행 (2026.03)</th>
+                        <th style="padding: 10px;">과거 최고점 (2021)</th>
+                        <th style="padding: 10px;">미래 예상 시뮬레이션</th>
+                    </tr>
+                    <tr>
+                        <td rowspan="3" style="padding: 10px; font-weight: bold; background-color: #f8fafc;">남편</td>
+                        <td style="padding: 10px;">재산세</td>
+                        <td style="padding: 10px;">${Math.round(d.husband.curr_pt||0).toLocaleString()}만</td>
+                        <td style="padding: 10px;">${Math.round(d.husband.past_pt||0).toLocaleString()}만</td>
+                        <td style="padding: 10px;">${Math.round(d.husband.futr_pt||0).toLocaleString()}만</td>
+                    </tr>
+                    <tr>
+                        <td style="padding: 10px;">종부세</td>
+                        <td style="padding: 10px;">${Math.round(d.husband.curr_jb||0).toLocaleString()}만</td>
+                        <td style="padding: 10px;">${Math.round(d.husband.past_jb||0).toLocaleString()}만</td>
+                        <td style="padding: 10px;">${Math.round(d.husband.futr_jb||0).toLocaleString()}만</td>
+                    </tr>
+                    <tr style="background-color: #f8fafc; font-weight: bold;">
+                        <td style="padding: 10px;">남편 소계</td>
+                        <td style="padding: 10px;">${Math.round(d.husband.curr||0).toLocaleString()}만</td>
+                        <td style="padding: 10px;">${Math.round(d.husband.past||0).toLocaleString()}만</td>
+                        <td style="padding: 10px;">${Math.round(d.husband.futr||0).toLocaleString()}만</td>
+                    </tr>
+                    <tr>
+                        <td rowspan="3" style="padding: 10px; font-weight: bold; background-color: #fef2f2;">아내</td>
+                        <td style="padding: 10px;">재산세</td>
+                        <td style="padding: 10px;">${Math.round(d.wife.curr_pt||0).toLocaleString()}만</td>
+                        <td style="padding: 10px;">${Math.round(d.wife.past_pt||0).toLocaleString()}만</td>
+                        <td style="padding: 10px;">${Math.round(d.wife.futr_pt||0).toLocaleString()}만</td>
+                    </tr>
+                    <tr>
+                        <td style="padding: 10px;">종부세</td>
+                        <td style="padding: 10px;">${Math.round(d.wife.curr_jb||0).toLocaleString()}만</td>
+                        <td style="padding: 10px;">${Math.round(d.wife.past_jb||0).toLocaleString()}만</td>
+                        <td style="padding: 10px;">${Math.round(d.wife.futr_jb||0).toLocaleString()}만</td>
+                    </tr>
+                    <tr style="background-color: #fef2f2; font-weight: bold;">
+                        <td style="padding: 10px;">아내 소계</td>
+                        <td style="padding: 10px;">${Math.round(d.wife.curr||0).toLocaleString()}만</td>
+                        <td style="padding: 10px;">${Math.round(d.wife.past||0).toLocaleString()}만</td>
+                        <td style="padding: 10px;">${Math.round(d.wife.futr||0).toLocaleString()}만</td>
+                    </tr>
+                    <tr style="background-color: #eff6ff; font-weight: bold; font-size: 15px;">
+                        <td colspan="2" style="padding: 12px;">가계합계 총 납부액</td>
+                        <td style="padding: 12px; color: #2563eb;">${Math.round(d.household.curr||0).toLocaleString()}만</td>
+                        <td style="padding: 12px; color: #ef4444;">${Math.round(d.household.past||0).toLocaleString()}만</td>
+                        <td style="padding: 12px; color: #ea580c;">${Math.round(d.household.futr||0).toLocaleString()}만</td>
+                    </tr>
+                </table>
+            `;
+
+            const blobHtml = new Blob([tableHTML], { type: 'text/html' });
+            const blobText = new Blob(["HTML 복사 전용입니다. 엑셀에 붙여넣어주세요."], { type: 'text/plain' });
+
+            try {
+                const item = new ClipboardItem({ 'text/html': blobHtml, 'text/plain': blobText });
+                navigator.clipboard.write([item]).then(() => alert('✅ 요약 표가 복사되었습니다. 엑셀/PPT에 붙여넣기(Ctrl+V) 하세요!'));
+            } catch (err) { alert('복사 중 오류가 발생했습니다.'); }
+        }
+
+        // --- 엑셀 상세 표 복사 (물건별 로우 데이터) ---
+        function copyToExcelDetail() {
+            if (lastDetailData.length === 0) { alert("먼저 시뮬레이션을 실행해주세요."); return; }
+            
+            const scenMap = { 'curr': '현재(2026)', 'past': '과거(2021)', 'futr': '미래예상' };
+            const ownerMap = { 'husband': '남편', 'wife': '아내' };
+
+            let trs = lastDetailData.map(d => `
+                <tr>
+                    <td style="padding: 8px;">${scenMap[d.scenario]}</td>
+                    <td style="padding: 8px;">${ownerMap[d.owner]}</td>
+                    <td style="padding: 8px;">${d.name}</td>
+                    <td style="padding: 8px;">${Math.round(d.ga).toLocaleString()}만</td>
+                    <td style="padding: 8px;">${Math.round(d.baseMan).toLocaleString()}만</td>
+                    <td style="padding: 8px;">${Math.round(d.purePT).toLocaleString()}만</td>
+                    <td style="padding: 8px;">${Math.round(d.edu).toLocaleString()}만</td>
+                    <td style="padding: 8px;">${Math.round(d.city).toLocaleString()}만</td>
+                    <td style="padding: 8px; font-weight:bold;">${Math.round(d.total).toLocaleString()}만</td>
+                </tr>
+            `).join('');
+
+            let tableHTML = `
+                <table border="1" style="border-collapse: collapse; text-align: center; font-family: sans-serif; font-size: 13px;">
+                    <tr style="background-color: #f1f5f9;">
+                        <th style="padding: 10px;">시나리오</th>
+                        <th style="padding: 10px;">소유주</th>
+                        <th style="padding: 10px;">자산명</th>
+                        <th style="padding: 10px;">조정공시가</th>
+                        <th style="padding: 10px;">재산과표</th>
+                        <th style="padding: 10px;">재산본세</th>
+                        <th style="padding: 10px;">교육세</th>
+                        <th style="padding: 10px;">도시분</th>
+                        <th style="padding: 10px;">합계</th>
+                    </tr>
+                    ${trs}
+                </table>
+            `;
+
+            const blobHtml = new Blob([tableHTML], { type: 'text/html' });
+            const blobText = new Blob(["HTML 복사 전용입니다. 엑셀에 붙여넣어주세요."], { type: 'text/plain' });
+
+            try {
+                const item = new ClipboardItem({ 'text/html': blobHtml, 'text/plain': blobText });
+                navigator.clipboard.write([item]).then(() => alert('✅ 상세 데이터 표가 복사되었습니다. 엑셀/PPT에 붙여넣기(Ctrl+V) 하세요!'));
+            } catch (err) { alert('복사 중 오류가 발생했습니다.'); }
+        }
     </script>
 </body>
 </html>
