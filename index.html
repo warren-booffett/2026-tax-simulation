@@ -247,8 +247,28 @@
             </div>
             <p class="mt-4 text-xs font-bold text-slate-400">※ 재산세 기준은 현행법(누진공제 산식)을 공통으로 사용하며, 시나리오별로 공정시장가액비율만 다르게 적용됩니다.</p>
         </div>
+        <div class="card">
+            <h2 class="text-xl font-black mb-6 text-slate-900">📊 [기준표 3] 재산세 누진 산정표 (1주택 특례 포함)</h2>
+            <div class="table-wrapper">
+                <table class="criteria-table min-w-full">
+                    <thead class="bg-slate-50">
+                        <tr><th rowspan="2">과세대상</th><th rowspan="2">과세표준 구간</th><th colspan="2" class="border-b-2 border-blue-200">세율</th></tr>
+                        <tr><th class="text-blue-600">일반 (다주택 등)</th><th class="text-blue-600 border-l border-blue-100">9억 이하 1세대 1주택 특례</th></tr>
+                    </thead>
+                    <tbody>
+                        <tr><td rowspan="4" class="font-black text-slate-500 bg-slate-50 border-r border-slate-200">주택</td><td>6천만원 이하</td><td>0.10%</td><td class="border-l border-slate-100 font-bold text-blue-600">0.05%</td></tr>
+                        <tr><td>1억 5천만원 이하</td><td>6만원 + 6천만원 초과금액의 0.15%</td><td class="border-l border-slate-100 font-bold text-blue-600">3만원 + 6천만원 초과금액의 0.1%</td></tr>
+                        <tr><td>3억원 이하</td><td>19만 5천원 + 1.5억원 초과금액의 0.25%</td><td class="border-l border-slate-100 font-bold text-blue-600">12만원 + 1.5억원 초과금액의 0.2%</td></tr>
+                        <tr><td>3억원 초과</td><td>57만원 + 3억원 초과금액의 0.4%</td><td class="border-l border-slate-100 font-bold text-blue-600">42만원 + 3억원 초과금액의 0.35%</td></tr>
+                        <tr class="bg-slate-50/50 text-slate-500 text-xs"><td colspan="4" class="text-left font-normal px-4">※ 최종 고지액 = 재산세 본세 + 지방교육세(본세의 20%) + 도시지역분(과표의 0.14%)</td></tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
     </div>
 
+
+    
     <script>
         // 1. 유틸리티 함수
         function safeNum(v) { return Number(v.toString().replace(/[^0-9.-]+/g, "")) || 0; }
