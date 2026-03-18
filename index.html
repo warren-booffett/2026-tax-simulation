@@ -495,49 +495,16 @@
 
             const renderCard = (id, title, data, color) => {
                 document.getElementById(id).innerHTML = `
-                /* max-w-[320px] 추가로 폭을 줄이고 mx-auto로 중앙 정렬 */
-                <div class="p-5 rounded-3xl bg-slate-50 border shadow-sm h-full flex flex-col justify-between max-w-[320px] mx-auto">
-                    <h4 class="font-black text-${color}-800 mb-4 flex items-center text-base">
-                        <span class="w-1.5 h-4 bg-${color}-600 rounded-full mr-2"></span>${title} 요약
-                    </h4>
-                    <div class="space-y-3">
-                        /* 패딩을 p-3으로 줄여서 더 촘촘하게 만듦 */
-                        <div class="bg-white p-3 rounded-xl border border-${color}-100 flex justify-between items-center">
-                            <div>
-                                <span class="text-[0.7rem] font-black uppercase text-slate-400">현재 합계</span><br>
-                                <b class="text-lg text-${color}-600">${Math.round(data.curr||0).toLocaleString()}만</b>
-                            </div>
-                            <div class="text-[0.65rem] text-slate-400 text-right leading-tight">
-                                종부 ${Math.round(data.curr_jb||0).toLocaleString()}<br>
-                                재산 ${Math.round(data.curr_pt||0).toLocaleString()}
-                            </div>
-                        </div>
-
-                        <div class="bg-white p-3 rounded-xl border border-red-50 flex justify-between items-center">
-                            <div>
-                                <span class="text-[0.7rem] font-black uppercase text-slate-400">과거 최고점</span><br>
-                                <b class="text-lg text-red-600">${Math.round(data.past||0).toLocaleString()}만</b>
-                            </div>
-                            <div class="text-[0.65rem] text-slate-400 text-right leading-tight">
-                                종부 ${Math.round(data.past_jb||0).toLocaleString()}<br>
-                                재산 ${Math.round(data.past_pt||0).toLocaleString()}
-                            </div>
-                        </div>
-
-                        <div class="bg-white p-3 rounded-xl border border-orange-100 flex justify-between items-center">
-                            <div>
-                                <span class="text-[0.7rem] font-black uppercase text-slate-400">미래 예상</span><br>
-                                <b class="text-lg text-orange-600">${Math.round(data.futr||0).toLocaleString()}만</b>
-                            </div>
-                            <div class="text-[0.65rem] text-slate-400 text-right leading-tight">
-                                종부 ${Math.round(data.futr_jb||0).toLocaleString()}<br>
-                                재산 ${Math.round(data.futr_pt||0).toLocaleString()}
-                            </div>
-                        </div>
+                <div class="p-6 rounded-3xl bg-slate-50 border shadow-sm h-full flex flex-col justify-between">
+                    <h4 class="font-black text-${color}-800 mb-6 flex items-center text-lg"><span class="w-2 h-5 bg-${color}-600 rounded-full mr-2"></span>${title} 요약</h4>
+                    <div class="space-y-4">
+                        <div class="bg-white p-4 rounded-xl border border-${color}-100 flex justify-between items-center"><div><span class="text-sm font-black uppercase text-slate-400">현재 합계</span><br><b class="text-xl text-${color}-600">${Math.round(data.curr||0).toLocaleString()}만</b></div><div class="text-sm text-slate-400 text-right">종부 ${Math.round(data.curr_jb||0).toLocaleString()}<br>재산 ${Math.round(data.curr_pt||0).toLocaleString()}</div></div>
+                        <div class="bg-white p-4 rounded-xl border border-red-50 flex justify-between items-center"><div><span class="text-sm font-black uppercase text-slate-400">과거 최고점</span><br><b class="text-xl text-red-600">${Math.round(data.past||0).toLocaleString()}만</b></div><div class="text-sm text-slate-400 text-right">종부 ${Math.round(data.past_jb||0).toLocaleString()}<br>재산 ${Math.round(data.past_pt||0).toLocaleString()}</div></div>
+                        <div class="bg-white p-4 rounded-xl border border-orange-100 flex justify-between items-center"><div><span class="text-sm font-black uppercase text-slate-400">미래 예상</span><br><b class="text-xl text-orange-600">${Math.round(data.futr||0).toLocaleString()}만</b></div><div class="text-sm text-slate-400 text-right">종부 ${Math.round(data.futr_jb||0).toLocaleString()}<br>재산 ${Math.round(data.futr_pt||0).toLocaleString()}</div></div>
                     </div>
                 </div>`;
             };
-            
+           
 
             
             // 글로벌 변수 업데이트
