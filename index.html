@@ -260,7 +260,7 @@
                     <table class="rate-table">
                         <thead class="bg-orange-50">
                             <tr><th colspan="3" class="text-orange-800 text-[0.8rem]">🟠 미래 시뮬레이션 종부세율 (과거기준 적용)</th></tr>
-                            <tr><th>과세표준 구간</th><th class="text-orange-600">일반</th><th class="text-orange-600 border-l border-orange-200">중과 <br><span class="text-[0.6rem] text-orange-500 font-bold" id="tbl-fut-rate-logic">(비거주 포함 시)</span></th></tr>
+                            <tr><th>과세표준 구간</th><th class="text-orange-600">일반</th><th class="text-orange-600 border-l border-orange-200">중과 <br><span class="text-sm text-orange-500 font-bold" id="tbl-fut-rate-logic">(비거주 포함 시)</span></th></tr>
                         </thead>
                         <tbody>
                             <tr><td>3억 원 이하</td><td>0.6%</td><td class="border-l border-orange-100 bg-orange-50/50 text-orange-700">1.2%</td></tr>
@@ -468,8 +468,8 @@
                         let holdC = holdY >= 15 ? 0.5 : (holdY >= 10 ? 0.4 : (holdY >= 5 ? 0.2 : 0));
                         let tR = Math.min(c.creditMax, ageC + holdC); 
                         if (tR > 0) { cAmt = netJb * tR; netJb -= cAmt; cTxt = `<span class="info-badge">-${Math.round(tR*100)}%</span><br><span class="text-[0.55rem] text-slate-400">보유${holdY}년/연령합산</span>`; } 
-                        else { cTxt = `<span class="text-[0.6rem] text-slate-400">적용불가<br>(보유${holdY}년/${ages[owner]}세)</span>`; }
-                    } else if (!is1H && jbBase > 0) { cTxt = `<span class="text-[0.6rem] text-slate-400">다주택 배제</span>`; }
+                        else { cTxt = `<span class="text-sm text-slate-400">적용불가<br>(보유${holdY}년/${ages[owner]}세)</span>`; }
+                    } else if (!is1H && jbBase > 0) { cTxt = `<span class="text-sm text-slate-400">다주택 배제</span>`; }
 
                     const finalJb = netJb * 1.2;
                     summary[owner][scen] = ptTotal + finalJb; summary[owner][scen+'_pt'] = ptTotal; summary[owner][scen+'_jb'] = finalJb;
@@ -498,9 +498,9 @@
                 <div class="p-6 rounded-3xl bg-slate-50 border shadow-sm h-full flex flex-col justify-between">
                     <h4 class="font-black text-${color}-800 mb-6 flex items-center text-lg"><span class="w-2 h-5 bg-${color}-600 rounded-full mr-2"></span>${title} 요약</h4>
                     <div class="space-y-4">
-                        <div class="bg-white p-4 rounded-xl border border-${color}-100 flex justify-between items-center"><div><span class="text-[0.6rem] font-black uppercase text-slate-400">현재 합계</span><br><b class="text-xl text-${color}-600">${Math.round(data.curr||0).toLocaleString()}만</b></div><div class="text-[0.6rem] text-slate-400 text-right">종부 ${Math.round(data.curr_jb||0).toLocaleString()}<br>재산 ${Math.round(data.curr_pt||0).toLocaleString()}</div></div>
-                        <div class="bg-white p-4 rounded-xl border border-red-50 flex justify-between items-center"><div><span class="text-[0.6rem] font-black uppercase text-slate-400">과거 최고점</span><br><b class="text-xl text-red-600">${Math.round(data.past||0).toLocaleString()}만</b></div><div class="text-[0.6rem] text-slate-400 text-right">종부 ${Math.round(data.past_jb||0).toLocaleString()}<br>재산 ${Math.round(data.past_pt||0).toLocaleString()}</div></div>
-                        <div class="bg-white p-4 rounded-xl border border-orange-100 flex justify-between items-center"><div><span class="text-[0.6rem] font-black uppercase text-slate-400">미래 예상</span><br><b class="text-xl text-orange-600">${Math.round(data.futr||0).toLocaleString()}만</b></div><div class="text-[0.6rem] text-slate-400 text-right">종부 ${Math.round(data.futr_jb||0).toLocaleString()}<br>재산 ${Math.round(data.futr_pt||0).toLocaleString()}</div></div>
+                        <div class="bg-white p-4 rounded-xl border border-${color}-100 flex justify-between items-center"><div><span class="text-sm font-black uppercase text-slate-400">현재 합계</span><br><b class="text-xl text-${color}-600">${Math.round(data.curr||0).toLocaleString()}만</b></div><div class="text-sm text-slate-400 text-right">종부 ${Math.round(data.curr_jb||0).toLocaleString()}<br>재산 ${Math.round(data.curr_pt||0).toLocaleString()}</div></div>
+                        <div class="bg-white p-4 rounded-xl border border-red-50 flex justify-between items-center"><div><span class="text-sm font-black uppercase text-slate-400">과거 최고점</span><br><b class="text-xl text-red-600">${Math.round(data.past||0).toLocaleString()}만</b></div><div class="text-sm text-slate-400 text-right">종부 ${Math.round(data.past_jb||0).toLocaleString()}<br>재산 ${Math.round(data.past_pt||0).toLocaleString()}</div></div>
+                        <div class="bg-white p-4 rounded-xl border border-orange-100 flex justify-between items-center"><div><span class="text-sm font-black uppercase text-slate-400">미래 예상</span><br><b class="text-xl text-orange-600">${Math.round(data.futr||0).toLocaleString()}만</b></div><div class="text-sm text-slate-400 text-right">종부 ${Math.round(data.futr_jb||0).toLocaleString()}<br>재산 ${Math.round(data.futr_pt||0).toLocaleString()}</div></div>
                     </div>
                 </div>`;
             };
