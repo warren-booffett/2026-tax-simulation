@@ -69,7 +69,7 @@
                 <li>✅ <b class="text-slate-900">가계 통합 리포트:</b> 남편/아내 세금을 합산하여 가구당 총 세액 산출 기능을 추가했습니다.</li>                
 
                 <li>✅ <b class="text-slate-900">영역별 캡처 기능:</b> [요약 카드]와 [상세 계산과정] 개별 캡처가 가능합니다.</li>
-                <li>✅ <b class="text-slate-900">엑셀/PPT 표 복사:</b> 표 구조 그대로 클립보드에 복사되어, 엑셀에 붙여넣기만 하면 바로 응용 가능합니다.</li>
+                <li>✅ <b class="text-slate-900">엑셀/PPT 표 복사:</b> 표 그대로 클립보드에 복사되어, 엑셀에 붙여넣어 사용 가능합니다.</li>
                 <li>✅ <b class="text-slate-900">실시간 자동 연동:</b> 입력값을 바꾸는 즉시 모든 결과값이 실시간으로 갱신됩니다.</li>
             </ul>
         </div>
@@ -589,7 +589,7 @@
                     canvas.toBlob(blob => {
                         try {
                             const item = new ClipboardItem({ 'image/png': blob });
-                            navigator.clipboard.write([item]).then(() => alert('✅ 이미지가 클립보드에 복사되었습니다. 보고서에 붙여넣기(Ctrl+V) 하세요!'));
+                            navigator.clipboard.write([item]).then(() => alert('✅ 이미지가 클립보드에 복사되었습니다.'));
                         } catch (err) { alert('현재 브라우저가 이미지 직접 복사를 지원하지 않습니다. [저장] 버튼을 이용해주세요.'); }
                     });
                 }
@@ -662,7 +662,7 @@
 
             try {
                 const item = new ClipboardItem({ 'text/html': blobHtml, 'text/plain': blobText });
-                navigator.clipboard.write([item]).then(() => alert('✅ 요약 표가 복사되었습니다. 엑셀/PPT에 붙여넣기(Ctrl+V) 하세요!'));
+                navigator.clipboard.write([item]).then(() => alert('✅ 요약 표가 복사되었습니다.'));
             } catch (err) { alert('복사 중 오류가 발생했습니다.'); }
         }
 
@@ -709,7 +709,7 @@
 
             try {
                 const item = new ClipboardItem({ 'text/html': blobHtml, 'text/plain': blobText });
-                navigator.clipboard.write([item]).then(() => alert('✅ 상세 데이터 표가 복사되었습니다. 엑셀/PPT에 붙여넣기(Ctrl+V) 하세요!'));
+                navigator.clipboard.write([item]).then(() => alert('✅ 상세 데이터 표가 복사되었습니다.'));
             } catch (err) { alert('복사 중 오류가 발생했습니다.'); }
         }
     </script>
