@@ -3,12 +3,12 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>[워렌부핏's 보유세 시뮬레이터] V2.0</title>
+    <title>[워렌부핏's 보유세 시뮬레이터] </title>
     <script src="https://cdn.tailwindcss.com"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
     <style>
         @import url('https://fonts.googleapis.com/css2?family=Pretendard:wght@400;600;700;900&display=swap');
-        /* [수정] 첫 화면 크기를 원래대로 콤팩트하게 보이도록 기본 폰트 사이즈 85%로 축소 */
+        /* 첫 화면 크기를 원래대로 콤팩트하게 보이도록 기본 폰트 사이즈 85%로 축소 */
         html { font-size: 120%; } 
         body { font-family: 'Pretendard', sans-serif; background-color: #f8fafc; color: #1e293b; letter-spacing: -0.02em; }
         .card { background: white; border-radius: 24px; box-shadow: 0 10px 25px -5px rgba(0,0,0,0.04); padding: 30px; border: 1px solid #f1f5f9; margin-bottom: 2rem; }
@@ -40,8 +40,8 @@
 
     <div class="max-w-7xl mx-auto">
         <header class="mb-8 text-center">
-            <div class="inline-block px-4 py-1 rounded-full bg-blue-100 text-blue-700 text-xs font-black mb-4 uppercase tracking-widest">FOR 월급쟁이부자들</div>
-            <h1 class="text-4xl md:text-5xl font-black text-slate-900 tracking-tighter mb-4">🏠 워렌부핏's 보유세 시뮬레이터</h1>
+            <div class="inline-block px-4 py-1 rounded-full bg-blue-100 text-blue-700 text-sm font-black mb-4 uppercase tracking-widest">FOR 월급쟁이부자들</div>
+            <h1 class="text-4xl md:text-5xl font-black text-slate-900 tracking-tighter mb-4">🏠 워렌부핏's<br>보유세 시뮬레이터</h1>
             <p class="text-slate-500 font-bold mb-6"> 감당 가능한 체력을 미리 계산해보세요.</p>
             
             <div class="flex flex-wrap justify-center gap-3 mb-4">
@@ -66,10 +66,10 @@
         <div>
             <h4 class="text-sm font-black text-red-600 mb-2">[신규 편의 기능 추가]</h4>
             <ul class="text-[0.9rem] text-slate-700 space-y-2 font-bold">
-                <li>✅ <b class="text-slate-900">가계 통합 리포트:</b> 남편/아내 세금을 합산하여 가구당 총 세액 산출 기능을 추가했습니다.</li>                
-
+                <li>✅ <b class="text-slate-900">모바일 최적화:</b> 캡처 저장 및 복사 기능이 모바일 환경에서도 정상 작동하도록 개선했습니다.</li>                
+                <li>✅ <b class="text-slate-900">가계 통합 리포트:</b> 남편/아내 세금을 합산하여 가구당 총 세액 산출 기능을 추가했습니다.</li>
                 <li>✅ <b class="text-slate-900">영역별 캡처 기능:</b> [요약 카드]와 [상세 계산과정] 개별 캡처가 가능합니다.</li>
-                <li>✅ <b class="text-slate-900">엑셀/PPT 표 복사:</b> 표 구조 그대로 클립보드에 복사되어, 엑셀에 붙여넣기만 하면 바로 응용 가능합니다.</li>
+                <li>✅ <b class="text-slate-900">엑셀/PPT 표 복사:</b> 표 그대로 클립보드에 복사되어, 엑셀에 붙여넣어 사용 가능합니다.</li>
                 <li>✅ <b class="text-slate-900">실시간 자동 연동:</b> 입력값을 바꾸는 즉시 모든 결과값이 실시간으로 갱신됩니다.</li>
             </ul>
         </div>
@@ -80,20 +80,20 @@
                 <h2 class="text-xl font-black mb-6 flex items-center">⚙️ 미래 변수 설정 (숫자 입력)</h2>
                 <div class="space-y-4">
                     <div class="flex justify-between items-center bg-slate-50 p-3 rounded-xl">
-                        <label class="text-xs font-black text-slate-600">공시 현실화율 (%)</label>
+                        <label class="text-sm font-black text-slate-600">공시 현실화율 (%)</label>
                         <input type="number" id="future-real" value="90" class="w-24 text-right !p-2 text-blue-600" oninput="updateDynamicTable()">
                     </div>
                     <div class="flex justify-between items-center bg-slate-50 p-3 rounded-xl">
-                        <label class="text-xs font-black text-slate-600">공정시장비율 (%)</label>
+                        <label class="text-sm font-black text-slate-600">공정시장비율 (%)</label>
                         <input type="number" id="future-ratio" value="100" class="w-24 text-right !p-2 text-blue-600" oninput="updateDynamicTable()">
                     </div>
                     <div class="flex justify-between items-center bg-slate-50 p-3 rounded-xl">
-                        <label class="text-xs font-black text-slate-600">다주택 공제액 (만)</label>
+                        <label class="text-sm font-black text-slate-600">다주택 공제액 (만)</label>
                         <input type="number" id="future-ex" value="50000" step="10000" class="w-28 text-right !p-2 text-red-600" oninput="updateDynamicTable()">
                     </div>
                     <div class="bg-emerald-50 p-4 rounded-xl border border-emerald-100">
                         <div class="flex justify-between items-center mb-2">
-                            <label class="text-xs font-black text-emerald-800">1주택 세액공제 한도 (%)</label>
+                            <label class="text-sm font-black text-emerald-800">1주택 세액공제 한도 (%)</label>
                             <input type="number" id="future-credit" value="80" class="w-24 text-right !p-2 text-emerald-600" oninput="updateDynamicTable()">
                         </div>
                         <p class="text-[0.65rem] text-emerald-700 font-bold leading-relaxed mt-2">
@@ -113,7 +113,7 @@
                     <label class="radio-card"><input type="radio" name="heavy-logic" value="조정지역 1주택 포함 2주택 중과" class="w-4 h-4 accent-red-600" onchange="updateDynamicTable()"><div class="text-sm font-bold text-slate-700">조정 1주택 포함 2주택 중과</div></label>
                     <label class="radio-card"><input type="radio" name="heavy-logic" value="3주택 이상 무조건 중과" class="w-4 h-4 accent-red-600" onchange="updateDynamicTable()"><div class="text-sm font-bold text-slate-700">3주택 이상 무조건 중과</div></label>
                 </div>
-                <p class="mt-4 text-xs font-bold text-slate-400">※ 이 기준은 하단의 [미래 시뮬레이션] 산출 시에만 적용됩니다.</p>
+                <p class="mt-4 text-sm font-bold text-slate-400">※ 이 기준은 하단의 [미래 시뮬레이션] 산출 시에만 적용됩니다.</p>
             </div>
         </div>
 
@@ -143,7 +143,7 @@
                         <select class="p-owner !p-2 !text-sm"><option value="husband" selected>남편</option><option value="wife">아내</option><option value="joint">공동명의</option></select>
                     </div>
                     <div class="md:col-span-2"><label class="text-[0.55rem] font-bold text-slate-400 mb-1 block uppercase">공시가격(만원)</label><input type="number" value="54000" class="p-price text-blue-700 !p-2 !text-sm"></div>
-                    <div class="md:col-span-2"><label class="text-[0.55rem] font-bold text-slate-400 mb-1 block uppercase">취득일</label><input type="date" value="2024-03-01" class="p-date !p-2 !text-xs text-slate-600"></div>
+                    <div class="md:col-span-2"><label class="text-[0.55rem] font-bold text-slate-400 mb-1 block uppercase">취득일</label><input type="date" value="2024-03-01" class="p-date !p-2 !text-sm text-slate-600"></div>
                     <div class="md:col-span-1"><label class="text-[0.55rem] font-bold text-slate-400 mb-1 block uppercase">조정지역</label><select class="p-reg !p-2 !text-sm"><option value="N" selected>비조정</option><option value="Y">조정</option></select></div>
                     <div class="md:col-span-2"><label class="text-[0.55rem] font-bold text-slate-400 mb-1 block uppercase">실거주</label><select class="p-res !p-2 !text-sm"><option value="Y">실거주</option><option value="N" selected>비거주</option></select></div>
                     <div class="md:col-span-1 flex items-end"><button onclick="removeRow(this)" class="w-full bg-white text-slate-300 font-bold py-2 rounded-lg border border-slate-200 hover:text-red-500 hover:bg-red-50 transition">✕</button></div>
@@ -161,9 +161,9 @@
                 <div class="flex flex-col lg:flex-row justify-between items-start lg:items-center border-b pb-4 mb-8">
                     <h2 class="text-2xl font-black text-slate-900 mb-4 lg:mb-0">02. 계산 결과 요약</h2>
                     <div class="flex flex-wrap gap-2">
-                        <button onclick="copyToExcelSummary()" class="px-4 py-2 bg-emerald-100 text-emerald-800 hover:bg-emerald-200 text-xs font-black rounded-lg transition shadow-sm border border-emerald-200">📊 요약 표 복사</button>
-                        <button onclick="exportToImage('copy', 'capture-target-summary')" class="px-4 py-2 bg-slate-800 text-white hover:bg-slate-700 text-xs font-black rounded-lg transition shadow-sm">📋 화면 캡쳐(복사)</button>
-                        <button onclick="exportToImage('save', 'capture-target-summary')" class="px-4 py-2 bg-slate-800 text-white hover:bg-slate-700 text-xs font-black rounded-lg transition shadow-sm">💾 화면 캡쳐(저장)</button>
+                        <button onclick="copyToExcelSummary()" class="px-4 py-2 bg-emerald-100 text-emerald-800 hover:bg-emerald-200 text-sm font-black rounded-lg transition shadow-sm border border-emerald-200">📊 요약 표 복사</button>
+                        <button onclick="exportToImage('copy', 'capture-target-summary')" class="px-4 py-2 bg-slate-800 text-white hover:bg-slate-700 text-sm font-black rounded-lg transition shadow-sm">📋 화면 캡쳐(복사)</button>
+                        <button onclick="exportToImage('save', 'capture-target-summary')" class="px-4 py-2 bg-slate-800 text-white hover:bg-slate-700 text-sm font-black rounded-lg transition shadow-sm">💾 화면 캡쳐(저장)</button>
                     </div>
                 </div>
                 
@@ -185,9 +185,9 @@
                         <p class="text-sm font-bold text-slate-500">※ 재산세 3단 분리 및 종부세 중복분 차감 역산 공식이 적용된 투명화 리포트입니다.</p>
                     </div>
                     <div class="flex flex-wrap gap-2 mt-4 lg:mt-0">
-                        <button onclick="copyToExcelDetail()" class="px-4 py-2 bg-emerald-100 text-emerald-800 hover:bg-emerald-200 text-xs font-black rounded-lg transition shadow-sm border border-emerald-200">📊 상세 표 복사</button>
-                        <button onclick="exportToImage('copy', 'capture-target-detail')" class="px-4 py-2 bg-slate-800 text-white hover:bg-slate-700 text-xs font-black rounded-lg transition shadow-sm">📋 화면 캡쳐(복사)</button>
-                        <button onclick="exportToImage('save', 'capture-target-detail')" class="px-4 py-2 bg-slate-800 text-white hover:bg-slate-700 text-xs font-black rounded-lg transition shadow-sm">💾 화면 캡쳐(저장)</button>
+                        <button onclick="copyToExcelDetail()" class="px-4 py-2 bg-emerald-100 text-emerald-800 hover:bg-emerald-200 text-sm font-black rounded-lg transition shadow-sm border border-emerald-200">📊 상세 표 복사</button>
+                        <button onclick="exportToImage('copy', 'capture-target-detail')" class="px-4 py-2 bg-slate-800 text-white hover:bg-slate-700 text-sm font-black rounded-lg transition shadow-sm">📋 화면 캡쳐(복사)</button>
+                        <button onclick="exportToImage('save', 'capture-target-detail')" class="px-4 py-2 bg-slate-800 text-white hover:bg-slate-700 text-sm font-black rounded-lg transition shadow-sm">💾 화면 캡쳐(저장)</button>
                     </div>
                 </div>
                 
@@ -260,7 +260,7 @@
                     <table class="rate-table">
                         <thead class="bg-orange-50">
                             <tr><th colspan="3" class="text-orange-800 text-[0.8rem]">🟠 미래 시뮬레이션 종부세율 (과거기준 적용)</th></tr>
-                            <tr><th>과세표준 구간</th><th class="text-orange-600">일반</th><th class="text-orange-600 border-l border-orange-200">중과 <br><span class="text-[0.6rem] text-orange-500 font-bold" id="tbl-fut-rate-logic">(비거주 포함 시)</span></th></tr>
+                            <tr><th>과세표준 구간</th><th class="text-orange-600">일반</th><th class="text-orange-600 border-l border-orange-200">중과 <br><span class="text-sm text-orange-500 font-bold" id="tbl-fut-rate-logic">(비거주 포함 시)</span></th></tr>
                         </thead>
                         <tbody>
                             <tr><td>3억 원 이하</td><td>0.6%</td><td class="border-l border-orange-100 bg-orange-50/50 text-orange-700">1.2%</td></tr>
@@ -274,7 +274,7 @@
                     </table>
                 </div>
             </div>
-            <p class="mt-4 text-xs font-bold text-slate-400">※ 재산세 기준은 현행법(누진공제 산식)을 공통으로 사용하며, 시나리오별로 공정시장가액비율만 다르게 적용됩니다.</p>
+            <p class="mt-4 text-sm font-bold text-slate-400">※ 재산세 기준은 현행법(누진공제 산식)을 공통으로 사용하며, 시나리오별로 공정시장가액비율만 다르게 적용됩니다.</p>
         </div>
         <div class="card">
             <h2 class="text-xl font-black mb-6 text-slate-900">📊 [기준표 3] 재산세 누진 산정표 (1주택 특례 포함)</h2>
@@ -289,7 +289,7 @@
                         <tr><td>1억 5천만원 이하</td><td>6만원 + 6천만원 초과금액의 0.15%</td><td class="border-l border-slate-100 font-bold text-blue-600">3만원 + 6천만원 초과금액의 0.1%</td></tr>
                         <tr><td>3억원 이하</td><td>19만 5천원 + 1.5억원 초과금액의 0.25%</td><td class="border-l border-slate-100 font-bold text-blue-600">12만원 + 1.5억원 초과금액의 0.2%</td></tr>
                         <tr><td>3억원 초과</td><td>57만원 + 3억원 초과금액의 0.4%</td><td class="border-l border-slate-100 font-bold text-blue-600">42만원 + 3억원 초과금액의 0.35%</td></tr>
-                        <tr class="bg-slate-50/50 text-slate-500 text-xs"><td colspan="4" class="text-left font-normal px-4">※ 최종 고지액 = 재산세 본세 + 지방교육세(본세의 20%) + 도시지역분(과표의 0.14%)</td></tr>
+                        <tr class="bg-slate-50/50 text-slate-500 text-sm"><td colspan="4" class="text-left font-normal px-4">※ 최종 고지액 = 재산세 본세 + 지방교육세(본세의 20%) + 도시지역분(과표의 0.14%)</td></tr>
                     </tbody>
                 </table>
             </div>
@@ -446,22 +446,19 @@
                     let ex = is1H ? c.ex1 : c.exM;
                     let jbBase = Math.max(0, (gaSum - ex) * c.jbRatio);
                     
-                    // [핵심 변경] 중과세율 여부(isHeavy) 판별 추가
                     let hvyType = c.ratesGen;
-                    let isHeavy = false;
-                    if (scen === 'curr') { hvyType = (rows.length >= 3 && jbBase > 120000) ? c.ratesHvy : c.ratesGen; isHeavy = (rows.length >= 3 && jbBase > 120000); }
-                    else if (scen === 'past') { hvyType = (rows.length >= 3 || (rows.length >= 2 && rows.some(r=>r.querySelector('.p-reg').value==='Y'))) ? c.ratesHvy : c.ratesGen; isHeavy = (hvyType === c.ratesHvy); }
+                    if (scen === 'curr') hvyType = (rows.length >= 3 && jbBase > 120000) ? c.ratesHvy : c.ratesGen;
+                    else if (scen === 'past') hvyType = (rows.length >= 3 || (rows.length >= 2 && rows.some(r=>r.querySelector('.p-reg').value==='Y'))) ? c.ratesHvy : c.ratesGen;
                     else {
                         if (hLogic.includes('비거주')) hvyType = (rows.length >= 2 || rows.some(r=>r.querySelector('.p-res').value==='N')) ? c.ratesHvy : c.ratesGen;
                         else if (hLogic.includes('조정지역')) hvyType = (rows.length >= 2 && rows.some(r=>r.querySelector('.p-reg').value==='Y')) ? c.ratesHvy : c.ratesGen;
                         else if (hLogic.includes('2주택')) hvyType = rows.length >= 2 ? c.ratesHvy : c.ratesGen;
                         else hvyType = rows.length >= 3 ? c.ratesHvy : c.ratesGen;
-                        isHeavy = (hvyType === c.ratesHvy);
                     }
 
                     const jbR = getJB(jbBase, hvyType);
                     const dup = jbBase > 0 ? ptPureSum * ((gaSum - ex)*0.6 / ptBaseSum) : 0;
-                    let taxBeforeCredit = Math.max(0, jbR.base_tax - dup);
+                    let netJb = Math.max(0, jbR.base_tax - dup);
 
                     let cTxt = "-"; let cAmt = 0;
                     if (is1H && jbBase > 0) {
@@ -470,61 +467,25 @@
                         let ageC = ages[owner] >= 70 ? 0.4 : (ages[owner] >= 65 ? 0.3 : (ages[owner] >= 60 ? 0.2 : 0));
                         let holdC = holdY >= 15 ? 0.5 : (holdY >= 10 ? 0.4 : (holdY >= 5 ? 0.2 : 0));
                         let tR = Math.min(c.creditMax, ageC + holdC); 
-                        if (tR > 0) { cAmt = taxBeforeCredit * tR; cTxt = `<span class="info-badge">-${Math.round(tR*100)}%</span><br><span class="text-[0.55rem] text-slate-400">보유${holdY}년/연령합산</span>`; } 
-                        else { cTxt = `<span class="text-[0.6rem] text-slate-400">적용불가<br>(보유${holdY}년/${ages[owner]}세)</span>`; }
-                    } else if (!is1H && jbBase > 0) { cTxt = `<span class="text-[0.6rem] text-slate-400">다주택 배제</span>`; }
+                        if (tR > 0) { cAmt = netJb * tR; netJb -= cAmt; cTxt = `<span class="info-badge">-${Math.round(tR*100)}%</span><br><span class="text-[0.55rem] text-slate-400">보유${holdY}년/연령합산</span>`; } 
+                        else { cTxt = `<span class="text-sm text-slate-400">적용불가<br>(보유${holdY}년/${ages[owner]}세)</span>`; }
+                    } else if (!is1H && jbBase > 0) { cTxt = `<span class="text-sm text-slate-400">다주택 배제</span>`; }
 
-                    // [핵심 변경] 농특세 및 최종 금액 분리 산출
-                    let netJbAfterCredit = Math.max(0, taxBeforeCredit - cAmt);
-                    let nongTeukTax = netJbAfterCredit * 0.2;
-                    let finalJb = netJbAfterCredit + nongTeukTax;
-
+                    const finalJb = netJb * 1.2;
                     summary[owner][scen] = ptTotal + finalJb; summary[owner][scen+'_pt'] = ptTotal; summary[owner][scen+'_jb'] = finalJb;
                     
                     if(!summary.household[scen]) { summary.household[scen]=0; summary.household[scen+'_pt']=0; summary.household[scen+'_jb']=0; }
                     summary.household[scen] += (ptTotal + finalJb); summary.household[scen+'_pt'] += ptTotal; summary.household[scen+'_jb'] += finalJb;
                     
                     const sTitle = scen === 'curr' ? "🔵 현재 시나리오 (2026.03 현행법)" : scen === 'past' ? "🔴 과거 시나리오 (2021년 최고점)" : "🟠 미래 시나리오 (변수 커스텀 & 2021년 산식 적용)";
-                    
-                    // [핵심 변경] 테이블 칼럼 확장 및 산식(Formula Text) 추가
                     detailHTML += `
                     <div class='mb-6 p-5 border-2 ${scen==='curr'?'border-blue-100':scen==='past'?'border-red-100':'border-orange-100'} rounded-2xl bg-white shadow-sm'>
                         <h4 class='font-black text-md mb-4'>${sTitle}</h4>
-                        <h5 class='text-xs font-black text-slate-500 mb-2'>① 재산세 3단 분리 산출 (물건별)</h5>
+                        <h5 class='text-sm font-black text-slate-500 mb-2'>① 재산세 3단 분리 산출 (물건별)</h5>
                         <div class='table-wrapper mb-6'><table class='criteria-table'><thead class='bg-slate-50'><tr><th>자산명</th><th>조정공시가</th><th>재산과표</th><th>재산본세</th><th>지방교육세</th><th>도시지역분</th><th>재산세합계</th></tr></thead><tbody>${ptRowHTML}</tbody></table></div>
-                        
-                        <h5 class='text-xs font-black text-slate-500 mb-2 mt-6'>② 종합부동산세 상세 산출 과정 (인별 합산)</h5>
-                        <div class='table-wrapper mb-4'>
-                            <table class='criteria-table'>
-                                <thead class='bg-slate-50'>
-                                    <tr>
-                                        <th>합산 공시가</th>
-                                        <th>기본공제</th>
-                                        <th>종부세 과세표준</th>
-                                        <th>적용세율</th>
-                                        <th>종부세 산출세액</th>
-                                        <th>재산세 이중과세 차감</th>
-                                        <th>1주택 세액공제</th>
-                                        <th class="bg-emerald-50 text-emerald-800">농어촌특별세 (20%)</th>
-                                        <th>최종 종부세 납부액</th>
-                                    </tr>
-                                </thead>
-                                <tbody>
-                                    <tr>
-                                        <td>${Math.round(gaSum).toLocaleString()}만</td>
-                                        <td class='text-red-500 font-bold'>-${ex.toLocaleString()}만</td>
-                                        <td>${Math.round(jbBase).toLocaleString()}만<br><span class='formula-text'>(공시가-공제)×${Math.round(c.jbRatio*100)}%</span></td>
-                                        <td class='${isHeavy ? 'text-orange-600' : 'text-blue-600'} font-bold'>${jbR.rate}<br><span class='formula-text'>${isHeavy ? '중과세율' : '일반세율'}</span></td>
-                                        <td>${Math.round(jbR.base_tax).toLocaleString()}만<br><span class='formula-text'>과표×세율-누진공제</span></td>
-                                        <td class='text-blue-500 font-bold'>-${Math.round(dup).toLocaleString()}만<br><span class='formula-text'>재산세 중복분 역산</span></td>
-                                        <td>${cTxt}<br><span class='text-red-500 font-bold'>${cAmt>0?'-'+Math.round(cAmt).toLocaleString()+'만':''}</span></td>
-                                        <td class='text-emerald-700 font-black bg-emerald-50/50'>+${Math.round(nongTeukTax).toLocaleString()}만<br><span class='formula-text'>공제 후 세액의 20%</span></td>
-                                        <td class='total-highlight text-red-600 text-lg'>${Math.round(finalJb).toLocaleString()}만</td>
-                                    </tr>
-                                </tbody>
-                            </table>
-                        </div>
-                        <div class="text-right bg-slate-50 p-4 rounded-xl border border-slate-200"><span class="text-sm font-black text-slate-600 mr-4">해당 시나리오 최종 납부 세액 (재산세+종부세):</span><span class="text-2xl font-black text-slate-900">${Math.round(ptTotal + finalJb).toLocaleString()} 만원</span></div>
+                        <h5 class='text-sm font-black text-slate-500 mb-2'>② 종합부동산세 역산 차감 (인별 합산)</h5>
+                        <div class='table-wrapper mb-4'><table class='criteria-table'><thead class='bg-slate-50'><tr><th>합산 공시가</th><th>공제액</th><th>종부과표</th><th>세율</th><th>종부본세</th><th>재산세차감</th><th>세액공제</th><th>최종 종부세(농특포함)</th></tr></thead><tbody><tr><td>${Math.round(gaSum).toLocaleString()}만</td><td class='text-red-500 font-bold'>-${ex.toLocaleString()}만</td><td>${Math.round(jbBase).toLocaleString()}만<br><span class='formula-text'>FMVR ${Math.round(c.jbRatio*100)}%</span></td><td>${jbR.rate}</td><td>${Math.round(jbR.base_tax).toLocaleString()}만</td><td class='text-blue-500 font-bold'>-${Math.round(dup).toLocaleString()}만</td><td>${cTxt}<br>${cAmt>0?'-'+Math.round(cAmt).toLocaleString()+'만':''}</td><td class='total-highlight text-red-600'>${Math.round(finalJb).toLocaleString()}만</td></tr></tbody></table></div>
+                        <div class="text-right bg-slate-50 p-4 rounded-xl border border-slate-200"><span class="text-sm font-black text-slate-600 mr-4">해당 시나리오 최종 납부 세액:</span><span class="text-2xl font-black text-slate-900">${Math.round(ptTotal + finalJb).toLocaleString()} 만원</span></div>
                     </div>`;
                 });
                 detailHTML += `</div>`;
@@ -537,9 +498,9 @@
                 <div class="p-6 rounded-3xl bg-slate-50 border shadow-sm h-full flex flex-col justify-between">
                     <h4 class="font-black text-${color}-800 mb-6 flex items-center text-lg"><span class="w-2 h-5 bg-${color}-600 rounded-full mr-2"></span>${title} 요약</h4>
                     <div class="space-y-4">
-                        <div class="bg-white p-4 rounded-xl border border-${color}-100 flex justify-between items-center"><div><span class="text-[0.6rem] font-black uppercase text-slate-400">현재 합계</span><br><b class="text-xl text-${color}-600">${Math.round(data.curr||0).toLocaleString()}만</b></div><div class="text-[0.6rem] text-slate-400 text-right">종부 ${Math.round(data.curr_jb||0).toLocaleString()}<br>재산 ${Math.round(data.curr_pt||0).toLocaleString()}</div></div>
-                        <div class="bg-white p-4 rounded-xl border border-red-50 flex justify-between items-center"><div><span class="text-[0.6rem] font-black uppercase text-slate-400">과거 최고점</span><br><b class="text-xl text-red-600">${Math.round(data.past||0).toLocaleString()}만</b></div><div class="text-[0.6rem] text-slate-400 text-right">종부 ${Math.round(data.past_jb||0).toLocaleString()}<br>재산 ${Math.round(data.past_pt||0).toLocaleString()}</div></div>
-                        <div class="bg-white p-4 rounded-xl border border-orange-100 flex justify-between items-center"><div><span class="text-[0.6rem] font-black uppercase text-slate-400">미래 예상</span><br><b class="text-xl text-orange-600">${Math.round(data.futr||0).toLocaleString()}만</b></div><div class="text-[0.6rem] text-slate-400 text-right">종부 ${Math.round(data.futr_jb||0).toLocaleString()}<br>재산 ${Math.round(data.futr_pt||0).toLocaleString()}</div></div>
+                        <div class="bg-white p-4 rounded-xl border border-${color}-100 flex justify-between items-center"><div><span class="text-sm font-black uppercase text-slate-400">현재 합계</span><br><b class="text-xl text-${color}-600">${Math.round(data.curr||0).toLocaleString()}만</b></div><div class="text-sm text-slate-400 text-right">종부 ${Math.round(data.curr_jb||0).toLocaleString()}<br>재산 ${Math.round(data.curr_pt||0).toLocaleString()}</div></div>
+                        <div class="bg-white p-4 rounded-xl border border-red-50 flex justify-between items-center"><div><span class="text-sm font-black uppercase text-slate-400">과거 최고점</span><br><b class="text-xl text-red-600">${Math.round(data.past||0).toLocaleString()}만</b></div><div class="text-sm text-slate-400 text-right">종부 ${Math.round(data.past_jb||0).toLocaleString()}<br>재산 ${Math.round(data.past_pt||0).toLocaleString()}</div></div>
+                        <div class="bg-white p-4 rounded-xl border border-orange-100 flex justify-between items-center"><div><span class="text-sm font-black uppercase text-slate-400">미래 예상</span><br><b class="text-xl text-orange-600">${Math.round(data.futr||0).toLocaleString()}만</b></div><div class="text-sm text-slate-400 text-right">종부 ${Math.round(data.futr_jb||0).toLocaleString()}<br>재산 ${Math.round(data.futr_pt||0).toLocaleString()}</div></div>
                     </div>
                 </div>`;
             };
@@ -568,32 +529,108 @@
             }
         }, { passive: false });
 
-        // --- 캡쳐 이미지 저장/복사 기능 ---
+        // --- [개선] 캡쳐 이미지 저장/복사 기능 (모바일 대응 Web Share API 추가) ---
         function exportToImage(action, targetId) {
             if (!isSimulationStarted) { alert("먼저 시뮬레이션을 실행해주세요."); return; }
             
             const target = document.getElementById(targetId);
-            // 캡쳐 여백 강제 조정 (잘림 방지)
             const originalPadding = target.style.padding;
             target.style.padding = '24px';
             
             html2canvas(target, { scale: 2, backgroundColor: '#f8fafc' }).then(canvas => {
                 target.style.padding = originalPadding; // 원상복구
                 
-                if (action === 'save') {
-                    const link = document.createElement('a');
-                    link.download = `보유세_${targetId}.png`;
-                    link.href = canvas.toDataURL('image/png');
-                    link.click();
-                } else if (action === 'copy') {
-                    canvas.toBlob(blob => {
+                canvas.toBlob(blob => {
+                    if (!blob) { alert("이미지 생성에 실패했습니다."); return; }
+                    const file = new File([blob], `보유세_${targetId}.png`, { type: 'image/png' });
+
+                    if (action === 'save') {
+                        // 모바일 브라우저(Safari, Android Chrome 등) 네이티브 공유/저장 기능
+                        if (navigator.canShare && navigator.canShare({ files: [file] })) {
+                            navigator.share({
+                                title: '보유세 시뮬레이션 결과',
+                                files: [file]
+                            }).catch(console.error);
+                        } else {
+                            // PC 및 구형 브라우저 다운로드 방식
+                            const link = document.createElement('a');
+                            link.download = `보유세_${targetId}.png`;
+                            link.href = URL.createObjectURL(blob);
+                            link.click();
+                            URL.revokeObjectURL(link.href);
+                        }
+                    } else if (action === 'copy') {
                         try {
                             const item = new ClipboardItem({ 'image/png': blob });
-                            navigator.clipboard.write([item]).then(() => alert('✅ 이미지가 클립보드에 복사되었습니다. 보고서에 붙여넣기(Ctrl+V) 하세요!'));
-                        } catch (err) { alert('현재 브라우저가 이미지 직접 복사를 지원하지 않습니다. [저장] 버튼을 이용해주세요.'); }
-                    });
-                }
+                            navigator.clipboard.write([item]).then(() => {
+                                alert('✅ 이미지가 클립보드에 복사되었습니다.');
+                            }).catch(err => {
+                                fallbackImageShare(file);
+                            });
+                        } catch (err) {
+                            fallbackImageShare(file);
+                        }
+                    }
+                }, 'image/png');
             });
+        }
+
+        // 이미지 복사가 막힌 환경을 위한 폴백(공유하기 창 띄우기)
+        function fallbackImageShare(file) {
+            if (navigator.canShare && navigator.canShare({ files: [file] })) {
+                if (confirm("현재 환경에서는 직접 복사가 제한되어 있습니다.\n[공유하기] 메뉴를 통해 복사하거나 저장하시겠습니까?")) {
+                    navigator.share({ files: [file], title: '보유세 결과' }).catch(console.error);
+                }
+            } else {
+                alert('해당 환경에서는 이미지 직접 복사를 지원하지 않습니다. [저장] 버튼을 이용해주세요.');
+            }
+        }
+
+        // --- [개선] HTML 표 강제 복사 폴백 함수 ---
+        function copyHTMLToClipboard(htmlContent) {
+            // 1. 최신 클립보드 API 시도
+            if (navigator.clipboard && window.ClipboardItem) {
+                const blobHtml = new Blob([htmlContent], { type: 'text/html' });
+                const blobText = new Blob(["HTML 복사 전용입니다. 엑셀에 붙여넣어주세요."], { type: 'text/plain' });
+                try {
+                    const item = new ClipboardItem({ 'text/html': blobHtml, 'text/plain': blobText });
+                    navigator.clipboard.write([item]).then(() => {
+                        alert('✅ 표가 복사되었습니다. 엑셀/PPT에 붙여넣기(Ctrl+V) 하세요!');
+                    }).catch(() => fallbackCopyHTML(htmlContent));
+                    return;
+                } catch (e) {
+                    fallbackCopyHTML(htmlContent);
+                    return;
+                }
+            }
+            // 2. 구형 브라우저/인앱 브라우저를 위한 execCommand 폴백
+            fallbackCopyHTML(htmlContent);
+        }
+
+        function fallbackCopyHTML(html) {
+            const container = document.createElement('div');
+            container.innerHTML = html;
+            // 화면에 보이지 않게 처리
+            container.style.position = 'fixed';
+            container.style.pointerEvents = 'none';
+            container.style.opacity = '0';
+            document.body.appendChild(container);
+
+            const selection = window.getSelection();
+            const range = document.createRange();
+            range.selectNodeContents(container);
+            selection.removeAllRanges();
+            selection.addRange(range);
+
+            try {
+                document.execCommand('copy');
+                alert('✅ 표가 복사되었습니다. 엑셀/PPT에 붙여넣기 하세요!');
+            } catch (err) {
+                alert('복사 중 오류가 발생했습니다. 브라우저 설정에서 클립보드 권한을 확인해주세요.');
+            } finally {
+                document.body.removeChild(container);
+                selection.removeAllRanges();
+            }
         }
 
         // --- 엑셀 요약 표 복사 (종부/재산 분리형) ---
@@ -657,13 +694,7 @@
                 </table>
             `;
 
-            const blobHtml = new Blob([tableHTML], { type: 'text/html' });
-            const blobText = new Blob(["HTML 복사 전용입니다. 엑셀에 붙여넣어주세요."], { type: 'text/plain' });
-
-            try {
-                const item = new ClipboardItem({ 'text/html': blobHtml, 'text/plain': blobText });
-                navigator.clipboard.write([item]).then(() => alert('✅ 요약 표가 복사되었습니다. 엑셀/PPT에 붙여넣기(Ctrl+V) 하세요!'));
-            } catch (err) { alert('복사 중 오류가 발생했습니다.'); }
+            copyHTMLToClipboard(tableHTML);
         }
 
         // --- 엑셀 상세 표 복사 (물건별 로우 데이터) ---
@@ -704,13 +735,7 @@
                 </table>
             `;
 
-            const blobHtml = new Blob([tableHTML], { type: 'text/html' });
-            const blobText = new Blob(["HTML 복사 전용입니다. 엑셀에 붙여넣어주세요."], { type: 'text/plain' });
-
-            try {
-                const item = new ClipboardItem({ 'text/html': blobHtml, 'text/plain': blobText });
-                navigator.clipboard.write([item]).then(() => alert('✅ 상세 데이터 표가 복사되었습니다. 엑셀/PPT에 붙여넣기(Ctrl+V) 하세요!'));
-            } catch (err) { alert('복사 중 오류가 발생했습니다.'); }
+            copyHTMLToClipboard(tableHTML);
         }
     </script>
 </body>
