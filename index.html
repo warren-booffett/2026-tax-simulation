@@ -455,10 +455,13 @@
                         else if (hLogic.includes('2주택')) hvyType = rows.length >= 2 ? c.ratesHvy : c.ratesGen;
                         else hvyType = rows.length >= 3 ? c.ratesHvy : c.ratesGen;
                     }
-
                     const jbR = getJB(jbBase, hvyType);
-                    const dup = jbBase > 0 ? ptPureSum * ((gaSum - ex)*0.6 / ptBaseSum) : 0;
+                    // [수정된 부분] 0.6 하드코딩 제거 및 법정 안분 비례식으로 정상화
+                    const dup = jbBase > 0 ? ptPureSum * ((gaSum - ex) / gaSum) : 0;
                     let netJb = Math.max(0, jbR.base_tax - dup);
+                    //const jbR = getJB(jbBase, hvyType);
+                    //'const dup = jbBase > 0 ? ptPureSum * ((gaSum - ex)*0.6 / ptBaseSum) : 0;
+                    //let netJb = Math.max(0, jbR.base_tax - dup);
 
                     let cTxt = "-"; let cAmt = 0;
                     if (is1H && jbBase > 0) {
