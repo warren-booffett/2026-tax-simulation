@@ -383,6 +383,9 @@ table.mx td.rh{text-align:left;font-weight:780;background:var(--card-2);color:va
 table.mx tbody tr:last-child td{border-bottom:0}
 table.mx td .sub{display:block;font-size:.66rem;font-weight:600;color:var(--text-3);margin-top:2px}
 .mxline{outline:2px solid var(--blue);outline-offset:-2px}
+table.mx td[title]{cursor:help}
+.capped{color:var(--orange);font-weight:900;margin-left:2px}
+.mxres{padding:16px;border-radius:var(--r-m);background:var(--card-2);border:1px solid var(--hair-2)}
 
 /* ─────────────────────────────  공시가격 vs 시가  ───────────────────────────── */
 .sise{color:var(--text-3);font-weight:600;font-size:.86em}
@@ -1022,11 +1025,33 @@ footer{padding:48px 0 60px;border-top:1px solid var(--hair);margin-top:36px;colo
         <div class="seg" id="mxMode" style="max-width:300px"><span class="thumb"></span></div>
         <label class="choice" style="flex:0 1 auto"><input type="checkbox" id="mxAdj"> 조정대상지역 포함</label>
       </div>
-      <div class="tw"><table class="mx" id="mxTable"></table></div>
-      <div class="note" style="margin-top:12px"><span>ℹ️</span><div>
-        세액공제(고령·장기거주 할인)를 <b>뺀</b> 기준입니다 — 60세 미만·거주 5년 미만이면 이 표와 같습니다.
-        다주택은 살고 있는 집이 <b>한 채</b>이고 값이 균등하다고 가정했습니다. 단위는 <b>연간 만원</b>.
-      </div></div>
+
+      <!-- 거주주택 가정 조절 -->
+      <div class="mxres">
+        <div class="row between wrapf gap-12">
+          <div style="flex:1 1 280px">
+            <div class="h4">🏠 다주택일 때, <b style="color:var(--blue)">몇 억짜리 집</b>에 살고 있다고 볼까요?</div>
+            <div class="tiny" style="margin-top:4px">거주주택이 비쌀수록 공제(<b>4억 + 5억×거주비중</b>)가 커져 세금이 줄어듭니다.
+              <b>1주택 두 열에는 영향이 없습니다.</b></div>
+          </div>
+          <div class="seg" id="mxResSeg" style="max-width:340px"><span class="thumb"></span></div>
+        </div>
+        <div class="rngwrap hide" id="mxResRange" style="margin-top:12px">
+          <div class="rngval"><b id="mxres-lab">6억</b><span class="small" id="mxres-sise">시가 약 8.7억짜리 집에 산다고 가정</span></div>
+          <input type="range" class="rng" id="mxres" min="1" max="30" step="0.5" value="6">
+          <div class="chips" id="mxres-chips">
+            <button class="chip" data-v="3">3억</button>
+            <button class="chip" data-v="5">5억</button>
+            <button class="chip" data-v="6">6억</button>
+            <button class="chip" data-v="9">9억</button>
+            <button class="chip" data-v="12">12억</button>
+            <button class="chip" data-v="15">15억</button>
+          </div>
+        </div>
+      </div>
+
+      <div class="tw" style="margin-top:16px"><table class="mx" id="mxTable"></table></div>
+      <div class="note" style="margin-top:12px"><span>ℹ️</span><div id="mx-note"></div></div>
     </div>
   </div>
 </section>
@@ -2219,44 +2244,94 @@ function paintRealRatio(){
 /* ── 매트릭스 ── */
 const MX_ROWS = [6, 9, 12, 14, 17, 20, 25, 30, 40, 50];   // 공시가 합계(억)
 const MX_COLS = [
-  { t:'1주택<br>직접 거주',  houses:1, res:'all'  },
-  { t:'1주택<br>전·월세',    houses:1, res:'none' },
-  { t:'2주택<br>1채 거주',   houses:2, res:'even' },
-  { t:'3주택<br>1채 거주',   houses:3, res:'even' }
+  { houses:1, res:'all'  },
+  { houses:1, res:'none' },
+  { houses:2 },
+  { houses:3 }
 ];
 let mxScen = 'y28', mxMode = 'amt';
+/* 다주택 열의 거주주택 가정: 'even' 균등분할 / 'fixed' 직접지정 / 'none' 전부 임대 */
+let mxRes = 'even', mxResEok = 6;
+
+/** 이 열·이 행에서 거주주택 공시가격(만원). 합계를 넘으면 합계로 자른다. */
+function mxResMan(col, totalMan){
+  if (col.houses === 1) return col.res === 'all' ? totalMan : 0;
+  if (mxRes === 'none')  return 0;
+  if (mxRes === 'fixed') return Math.min(mxResEok * 10000, totalMan);
+  return totalMan / col.houses;                      // even
+}
+
+function mxColLabel(col){
+  if (col.houses === 1) return col.res === 'all' ? '1주택<br>직접 거주' : '1주택<br>전·월세';
+  const sub = mxRes === 'none'  ? '전부 임대'
+            : mxRes === 'fixed' ? `거주 ${mxResEok}억`
+            : '균등 분할';
+  return `${col.houses}주택<br>${sub}`;
+}
 
 function mxCell(col, eok, scenId, adj){
   const totalMan = eok * 10000;
-  const resMan = col.res === 'all' ? totalMan : col.res === 'none' ? 0 : totalMan / col.houses;
-  return quickCalc({ houses:col.houses, totalMan, resMan, adj, holdY:3, liveY:3, age:55 }, scenId).total;
+  const resMan = mxResMan(col, totalMan);
+  const r = quickCalc({ houses:col.houses, totalMan, resMan, adj, holdY:3, liveY:3, age:55 }, scenId);
+  return { total: r.total, resMan, ded: r.jbInfo.ded, ratio: r.jbInfo.ctx.resRatio, capped: resMan >= totalMan && col.houses > 1 };
 }
 
 function paintMatrix(){
   const adj = $('#mxAdj').checked;
   const grid = MX_ROWS.map(eok => MX_COLS.map(c => mxCell(c, eok, mxScen, adj)));
   const cur  = MX_ROWS.map(eok => MX_COLS.map(c => mxCell(c, eok, 'curr', adj)));
-  const max  = Math.max(...grid.flat(), 1);
+  const max  = Math.max(...grid.map(r => r.map(x => x.total)).flat(), 1);
 
-  const head = `<thead><tr><th class="rh">공시가격 합계<br><span class="sub" style="font-weight:600">(괄호는 시가)</span></th>${MX_COLS.map(c=>`<th>${c.t}</th>`).join('')}</tr></thead>`;
+  const head = `<thead><tr><th class="rh">공시가격 합계<br><span class="sub" style="font-weight:600">(괄호는 시가)</span></th>${
+    MX_COLS.map(c => `<th>${mxColLabel(c)}</th>`).join('')}</tr></thead>`;
+
   const body = MX_ROWS.map((eok, i) => {
     const tds = MX_COLS.map((c, k) => {
-      const v = grid[i][k], base = cur[i][k];
+      const g = grid[i][k], v = g.total, base = cur[i][k].total;
       const heat = clamp(v / max, 0, 1);
       const bg = `rgba(224,57,62,${(0.03 + heat * 0.42).toFixed(3)})`;
+      /* 마우스를 올리면 이 칸의 가정과 공제를 그대로 보여준다 */
+      const tip = c.houses === 1
+        ? `1주택 ${c.res === 'all' ? '실거주' : '전·월세'} · 기본공제 ${fmtEok(g.ded)}`
+        : `거주주택 ${fmtEok(g.resMan)} + 임대 ${fmtEok(eok*10000 - g.resMan)} `
+          + `· 거주비중 ${Math.round(g.ratio*100)}% · 기본공제 ${fmtEok(g.ded)}`;
+      /* 지정한 거주주택 값이 그 행 합계보다 커서 잘린 칸은 표시 */
+      const mark = g.capped ? `<span class="capped" title="지정한 거주주택 가격이 이 행의 합계보다 커서 전액 거주로 계산했습니다">*</span>` : '';
+
       if (mxMode === 'amt'){
-        return `<td style="background:${bg}">${fmtNum(v)}<span class="sub">월 ${fmtNum(v/12)}</span></td>`;
+        return `<td style="background:${bg}" title="${tip}">${fmtNum(v)}${mark}<span class="sub">월 ${fmtNum(v/12)}</span></td>`;
       }
       const diff = v - base;
       const pct = base > 0 ? diff / base * 100 : (diff > 0 ? 100 : 0);
       const col = diff > 0.5 ? 'var(--red)' : diff < -0.5 ? 'var(--green)' : 'var(--text-3)';
-      return `<td style="background:${bg};color:${col}">${diff > 0.5 ? '+' : ''}${fmtNum(diff)}<span class="sub">${
+      return `<td style="background:${bg};color:${col}" title="${tip}">${diff > 0.5 ? '+' : ''}${fmtNum(diff)}${mark}<span class="sub">${
         base > 0 ? (diff>0?'+':'') + pct.toFixed(0) + '%' : '신규'}</span></td>`;
     }).join('');
     return `<tr><td class="rh">공시 ${eok}억<span class="sub">시가 약 ${fmtEok(toSise(eok*10000))}</span></td>${tds}</tr>`;
   }).join('');
 
   $('#mxTable').innerHTML = head + `<tbody>${body}</tbody>`;
+
+  /* 가정 설명을 현재 설정에 맞춰 다시 쓴다 */
+  const anyCapped = grid.some(r => r.some(x => x.capped));
+  const assume = mxRes === 'none'
+    ? `다주택은 <b>살고 있는 집이 없다</b>(전부 전·월세)고 가정했습니다 → 기본공제가 <b>4억</b>으로 고정됩니다.`
+    : mxRes === 'fixed'
+    ? `다주택은 <b>공시가격 ${mxResEok}억</b>(시가 약 ${fmtEok(toSise(mxResEok*10000))})짜리 집에 살고 나머지는 전·월세를 줬다고 가정했습니다.`
+    : `다주택은 살고 있는 집이 <b>한 채</b>이고 값이 <b>균등</b>하다고 가정했습니다 (2주택이면 절반, 3주택이면 1/3).`;
+  $('#mx-note').innerHTML = `${assume}
+    ${anyCapped ? '<b>*</b> 표시된 칸은 지정한 거주주택 가격이 그 행의 합계보다 커서 <b>전액 거주</b>로 계산했습니다. ' : ''}
+    세액공제(고령·장기거주 할인)를 <b>뺀</b> 기준이라 60세 미만·거주 5년 미만이면 이 표와 같습니다.
+    각 칸에 마우스를 올리면 거주주택·임대·기본공제가 나옵니다. 단위는 <b>연간 만원</b>.`;
+}
+
+function syncMxRes(){
+  $('#mxResRange').classList.toggle('hide', mxRes !== 'fixed');
+  $('#mxres').value = mxResEok;
+  $('#mxres-lab').textContent = mxResEok + '억';
+  $('#mxres-sise').textContent = `시가 약 ${fmtEok(toSise(mxResEok*10000))}짜리 집에 산다고 가정`;
+  $$('#mxres-chips .chip').forEach(c => c.classList.toggle('on', Number(c.dataset.v) === mxResEok));
+  paintMatrix();
 }
 
 /* ═══════════════════════════════════════════════════════════════════════════
@@ -2573,6 +2648,16 @@ buildSeg($('#mxSeg'),  [{id:'curr',label:'지금 (2026)'},{id:'y27',label:'2027�
 buildSeg($('#mxMode'), [{id:'amt',label:'세금 금액'},{id:'diff',label:'지금 대비 증감'}],
   'amt', id => { mxMode = id; paintMatrix(); });
 $('#mxAdj').addEventListener('change', paintMatrix);
+
+/* 다주택 열의 거주주택 가정 */
+buildSeg($('#mxResSeg'),
+  [{id:'even',label:'균등 분할'},{id:'fixed',label:'직접 지정'},{id:'none',label:'전부 임대'}],
+  'even', id => { mxRes = id; syncMxRes(); });
+$('#mxres').addEventListener('input', e => { mxResEok = Number(e.target.value); syncMxRes(); });
+$('#mxres-chips').addEventListener('click', e => {
+  const b = e.target.closest('.chip');
+  if (b){ mxResEok = Number(b.dataset.v); syncMxRes(); }
+});
 
 buildSeg($('#scenSeg'), SCEN.map(s => ({ id:s.id, label:s.name })), 'y28', id => {
   activeScen = id;
