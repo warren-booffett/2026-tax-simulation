@@ -667,18 +667,22 @@ footer{padding:48px 0 60px;border-top:1px solid var(--hair);margin-top:36px;colo
           <svg class="chev" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"><path d="M6 9l6 6 6-6"/></svg></button>
         <div class="acc-body"><div class="inner"><div class="pad">
           <div class="tw" style="margin-bottom:12px">
-            <table class="t"><thead><tr><th>기간</th><th>① 보유공제 (2027년 한정)</th><th>② 거주공제</th></tr></thead>
+            <table class="t" style="min-width:720px">
+              <thead><tr><th class="tl-left">구분</th><th style="color:var(--blue)">현행 (2026)</th><th style="color:var(--violet)">2027년</th><th style="color:var(--orange)">2028년~</th></tr></thead>
             <tbody>
-              <tr><td>5~10년</td><td>10%</td><td class="pos">20%</td></tr>
-              <tr><td>10~15년</td><td>20%</td><td class="pos">40%</td></tr>
-              <tr><td>15년 이상</td><td>25%</td><td class="pos">50%</td></tr>
+              <tr><td class="tl-left"><b>적용되는 공제</b></td><td>보유공제</td><td>보유 · 거주 중 <b>높은 쪽</b></td><td class="pos"><b>거주공제만</b></td></tr>
+              <tr><td class="tl-left">5~10년</td><td>보유 20%</td><td>보유 10% <span class="fx">거주 20%</span></td><td class="pos">거주 20%</td></tr>
+              <tr><td class="tl-left">10~15년</td><td>보유 40%</td><td>보유 20% <span class="fx">거주 40%</span></td><td class="pos">거주 40%</td></tr>
+              <tr><td class="tl-left">15년 이상</td><td>보유 50%</td><td>보유 25% <span class="fx">거주 50%</span></td><td class="pos">거주 50%</td></tr>
+              <tr><td class="tl-left">연령공제</td><td colspan="3">60~65세 20% / 65~70세 30% / 70세 이상 40% — <b>3개 연도 모두 동일</b></td></tr>
+              <tr><td class="tl-left">공제율 합계 한도</td><td>80%</td><td>80%</td><td>80%</td></tr>
+              <tr><td class="tl-left"><b>금액 한도</b></td><td>없음</td><td class="hv">800만원</td><td class="hv">600만원</td></tr>
             </tbody></table>
           </div>
           <ul class="stack gap-8 small">
-            <li>• <b>연령공제</b>는 그대로: 60~65세 20% / 65~70세 30% / 70세 이상 40%</li>
-            <li>• <b>2027년</b>: ①보유공제(거주공제의 1/2)와 ②거주공제 중 <b>높은 쪽</b> 적용</li>
-            <li>• <b>2028년 이후</b>: <b>거주공제만</b> 적용</li>
-            <li>• 공제율 한도 연령+거주 합계 최대 <b>80%</b>, 금액 한도 신설 — 2027년 <b>800만원</b> / 2028년 이후 <b>600만원</b></li>
+            <li>• 개정 <b>보유공제는 거주공제의 정확히 1/2</b>입니다. 2027년은 둘 중 높은 쪽이므로 사실상 <b>거주 중이면 거주공제, 아니면 반토막 보유공제</b>가 됩니다</li>
+            <li>• 2028년부터는 보유공제 자체가 사라져 <b>안 살면 0%</b>입니다</li>
+            <li>• 금액 한도는 <b>2027년 800만원 / 2028년 이후 600만원</b> — 요약본들이 1년씩 밀려 있는 대표적인 항목입니다</li>
             <li>• 부득이한 사유 주거이전(최대 3년), 재개발·재건축 공사기간 50%는 <b>거주기간으로 인정</b></li>
           </ul>
         </div></div></div>
@@ -688,25 +692,26 @@ footer{padding:48px 0 60px;border-top:1px solid var(--hair);margin-top:36px;colo
         <button class="acc-head"><span class="pill violet">양도세</span><span class="t">장기보유특별공제 → 장기거주 소득공제 (2028.1.1. 양도분~)</span>
           <svg class="chev" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"><path d="M6 9l6 6 6-6"/></svg></button>
         <div class="acc-body"><div class="inner"><div class="pad">
-          <p class="small" style="margin-bottom:10px"><b>1세대 1주택자</b> (3년 이상 보유 + 2년 이상 거주 요건 동일)</p>
           <div class="tw" style="margin-bottom:14px">
-            <table class="t"><thead><tr><th>구분</th><th>~2027.12.31.</th><th>2028년</th><th>2029년~</th></tr></thead>
+            <table class="t" style="min-width:760px">
+              <thead><tr><th class="tl-left">대상</th><th class="tl-left">공제 종류</th>
+                <th style="color:var(--blue)">~2027.12.31.</th><th style="color:var(--orange)">2028년</th><th style="color:var(--red)">2029년~</th></tr></thead>
             <tbody>
-              <tr><td>거주공제</td><td>연 4% / 최대 40%</td><td class="pos">연 6% / 최대 60%</td><td class="pos">연 8% / 최대 80%</td></tr>
-              <tr><td>보유공제</td><td>연 4% / 최대 40%</td><td class="neg">연 2% / 최대 20%</td><td class="neg">폐지</td></tr>
-            </tbody></table>
-          </div>
-          <p class="small" style="margin-bottom:10px"><b>다주택자</b> (3년 이상 보유)</p>
-          <div class="tw" style="margin-bottom:14px">
-            <table class="t"><thead><tr><th>구분</th><th>~2027.12.31.</th><th>2028년</th><th>2029년~</th></tr></thead>
-            <tbody>
-              <tr><td>거주공제 (2년 이상 거주 시)</td><td>–</td><td>연 2% / 최대 30%</td><td>연 2% / 최대 30%</td></tr>
-              <tr><td>보유공제</td><td>연 2% / 최대 30%</td><td class="neg">연 1% / 최대 15%</td><td class="neg">폐지</td></tr>
+              <tr><td class="tl-left" rowspan="3"><b>1세대 1주택</b><span class="fx">3년 보유 + 2년 거주</span></td>
+                <td class="tl-left">거주공제</td><td>연 4% / 최대 40%</td><td class="pos">연 6% / 최대 60%</td><td class="pos">연 8% / 최대 80%</td></tr>
+              <tr><td class="tl-left">보유공제</td><td>연 4% / 최대 40%</td><td class="neg">연 2% / 최대 20%</td><td class="neg">폐지</td></tr>
+              <tr><td class="tl-left">적용 방식</td><td colspan="2">거주 + 보유 <b>합산</b> (한도 80%)</td><td class="pos"><b>거주공제만</b></td></tr>
+              <tr><td class="tl-left" rowspan="3"><b>다주택</b><span class="fx">3년 이상 보유</span></td>
+                <td class="tl-left">거주공제<span class="fx">2년 이상 거주 시</span></td><td style="color:var(--text-3)">–</td><td>연 2% / 최대 30%</td><td>연 2% / 최대 30%</td></tr>
+              <tr><td class="tl-left">보유공제</td><td>연 2% / 최대 30%</td><td class="neg">연 1% / 최대 15%</td><td class="neg">폐지</td></tr>
+              <tr><td class="tl-left">적용 방식</td><td>보유공제만</td><td>거주 · 보유 중 <b>높은 쪽</b></td><td class="pos"><b>거주공제만</b></td></tr>
+              <tr style="background:var(--card-2)"><td class="tl-left" colspan="2"><b>공제 한도</b><span class="fx">인별 · 양도 물건별 각각</span></td>
+                <td>없음</td><td class="hv">20억</td><td class="hv">10억</td></tr>
             </tbody></table>
           </div>
           <ul class="stack gap-8 small">
             <li>• 2029년부터는 <b>거주 10년 = 80%</b>가 만점, 보유만으로는 0%</li>
-            <li>• 공제 <b>한도 신설</b> — 인별·물건별 각각 2028년 20억 → 2029년 이후 <b>10억</b></li>
+            <li>• 1주택 거주공제는 <b>40 → 60 → 80%</b>로 2년에 걸쳐 오르고, 보유공제는 같은 속도로 <b>40 → 20 → 0%</b>로 사라집니다</li>
             <li>• 제도 이원화: <b>장기거주</b> 소득공제(주택·입주권) / <b>장기보유</b> 소득공제(토지·주택 외 건물)</li>
           </ul>
         </div></div></div>
@@ -1238,12 +1243,14 @@ footer{padding:48px 0 60px;border-top:1px solid var(--hair);margin-top:36px;colo
       </div>
     </div>
 
-    <!-- 기준표 2: 종부세 세율표 탭 -->
+    <!-- 기준표 2: 종부세 세율표 (연도 통합) -->
     <div class="card pad-l reveal" style="margin-top:18px">
-      <div class="row between wrapf gap-12" style="margin-bottom:16px">
-        <h3 class="h3">📋 종합부동산세 세율표</h3>
-        <div class="seg" id="rateSeg" style="max-width:480px"><span class="thumb"></span></div>
+      <div class="row between wrapf gap-12" style="margin-bottom:10px">
+        <h3 class="h3">📋 종합부동산세 세율표 — 연도별 비교</h3>
+        <label class="choice" style="flex:0 1 auto"><input type="checkbox" id="rateDelta" checked> 현행 대비 증감 표시</label>
       </div>
+      <p class="small" style="margin-bottom:14px">같은 과세표준 구간을 <b>가로로 훑으면</b> 연도별로 세율이 어떻게 움직이는지 보입니다.
+        증감(%p)은 <b>현행 2026년 같은 성격의 열</b>과 비교한 값입니다.</p>
       <div id="ratePanel"></div>
     </div>
 
@@ -2337,34 +2344,67 @@ function syncMxRes(){
 /* ═══════════════════════════════════════════════════════════════════════════
    7. 세율표 탭
    ═══════════════════════════════════════════════════════════════════════════ */
-const RATE_VIEWS = [
-  { id:'curr', label:'현행 2026', ac:'var(--blue)',   cols:['일반','중과(3주택↑)'], keys:['curr_gen','curr_hvy'],
-    note:'3주택 이상 보유자는 과세표준 12억 초과분부터 중과세율이 적용됩니다.' },
-  { id:'y27',  label:'2027년',    ac:'var(--violet)', cols:['2주택 이하','3주택 이상'], keys:['y27_gen','y27_hvy'],
-    note:'6~12억 구간이 1.0% → 1.3%로 인상되는 것은 2027년부터입니다. 주택 수 구분은 2027년까지 유지됩니다.' },
-  { id:'y28',  label:'2028년~',   ac:'var(--orange)', cols:['단일 세율 (주택 수 무관)'], keys:['y28'],
-    note:'주택 수 차등이 폐지되고 주택 가액 기준 단일 세율표로 통합됩니다. 94억 초과 및 법인은 5.0%.' },
-  { id:'past', label:'2021 최고점', ac:'var(--red)',  cols:['일반','중과'], keys:['past_gen','past_hvy'],
-    note:'참고용 과거 최고점 세율입니다. 당시 공정시장가액비율은 95%였습니다.' }
+/* 연도를 열로 세운 통합 세율표. cols[].b = 증감 비교 기준(현행 열) */
+const RATE_YEARS = [
+  { label:'현행 (2026)', ac:'var(--blue)', sub:'공정비율 60%',
+    cols:[{ k:'curr_gen', c:'일반' }, { k:'curr_hvy', c:'중과 (3주택↑)' }] },
+  { label:'2027년', ac:'var(--violet)', sub:'공정비율 70%',
+    cols:[{ k:'y27_gen', c:'2주택 이하', b:'curr_gen', bl:'vs 현행 일반' }, { k:'y27_hvy', c:'3주택 이상', b:'curr_hvy', bl:'vs 현행 중과' }] },
+  { label:'2028년~', ac:'var(--orange)', sub:'공정비율 70% / 대상자 80%',
+    cols:[{ k:'y28', c:'단일 (주택 수 무관)', b:'curr_gen', bl:'vs 현행 일반' }] },
+  { label:'2021년 최고점', ac:'var(--red)', sub:'참고 · 공정비율 95%',
+    cols:[{ k:'past_gen', c:'일반' }, { k:'past_hvy', c:'중과' }] }
 ];
 const BAND_LABELS = ['3억 이하','3~6억','6~12억','12~25억','25~50억','50~94억','94억 초과'];
+/* 법인 세율(단일). null = 자료 없음 */
+const RATE_CORP = { curr_gen:2.7, curr_hvy:5.0, y27_gen:3.5, y27_hvy:5.0, y28:5.0, past_gen:null, past_hvy:null };
 
-function paintRates(id){
-  const v = RATE_VIEWS.find(x => x.id === id);
-  const rows = BAND_LABELS.map((lab, i) => {
-    const cells = v.keys.map(k => {
-      const r = JB_TABLES[k][i][1] * 100;
-      const base = JB_TABLES.curr_gen[i][1] * 100;
-      const heavy = r > base + .001;
-      return `<td class="${heavy ? 'hv' : ''}" style="${heavy?'':'color:'+v.ac}">${r.toFixed(1)}%</td>`;
-    }).join('');
+function paintRates(){
+  const showDelta = $('#rateDelta').checked;
+  const sep = 'border-left:1px solid var(--hair)';
+
+  /* 셀 하나 — 값 + (선택) 현행 대비 증감 */
+  const cell = (val, baseVal, ac, first) => {
+    if (val == null) return `<td style="color:var(--text-3);${first?sep:''}">–</td>`;
+    const d = baseVal == null ? null : val - baseVal;
+    const up = d != null && d > .001, down = d != null && d < -.001;
+    const tag = !showDelta || d == null ? ''
+      : `<span class="fx">${up ? '▲ +' + d.toFixed(1) : down ? '▼ ' + d.toFixed(1) : '동일'}${up||down?'%p':''}</span>`;
+    const cls = up ? 'hv' : down ? 'pos' : '';
+    return `<td class="${cls}" style="${cls?'':'color:'+ac};${first?sep:''}">${val.toFixed(1)}%${tag}</td>`;
+  };
+
+  const head1 = RATE_YEARS.map(y =>
+    `<th colspan="${y.cols.length}" style="color:${y.ac};${sep}">${y.label}<span class="fx">${y.sub}</span></th>`).join('');
+  const head2 = RATE_YEARS.flatMap(y =>
+    y.cols.map((c, i) => `<th style="color:${y.ac};${i===0?sep:''}">${c.c}${
+      showDelta && c.bl ? `<span class="fx">${c.bl}</span>` : ''}</th>`)).join('');
+
+  const rows = BAND_LABELS.map((lab, bi) => {
+    const cells = RATE_YEARS.flatMap(y => y.cols.map((c, i) =>
+      cell(JB_TABLES[c.k][bi][1] * 100, c.b ? JB_TABLES[c.b][bi][1] * 100 : null, y.ac, i === 0))).join('');
     return `<tr><td class="tl-left">${lab}</td>${cells}</tr>`;
   }).join('');
+
+  const corpCells = RATE_YEARS.flatMap(y => y.cols.map((c, i) =>
+    cell(RATE_CORP[c.k], c.b ? RATE_CORP[c.b] : null, y.ac, i === 0))).join('');
+
   $('#ratePanel').innerHTML = `
-    <div class="tw"><table class="t">
-      <thead><tr><th class="tl-left">과세표준 구간</th>${v.cols.map(c=>`<th style="color:${v.ac}">${c}</th>`).join('')}</tr></thead>
-      <tbody>${rows}</tbody></table></div>
-    <div class="note" style="margin-top:12px"><span>ℹ️</span><div>${v.note}</div></div>`;
+    <div class="tw"><table class="t" style="min-width:1020px">
+      <thead>
+        <tr><th class="tl-left" rowspan="2">과세표준 구간</th>${head1}</tr>
+        <tr>${head2}</tr>
+      </thead>
+      <tbody>${rows}
+        <tr style="background:var(--card-2)"><td class="tl-left"><b>법인 (단일세율)</b></td>${corpCells}</tr>
+      </tbody></table></div>
+    <div class="note" style="margin-top:12px"><span>ℹ️</span><div>
+      • <b>6~12억 구간 1.0% → 1.3%</b> 인상은 <b>2027년부터</b>입니다(2028년 아님).<br>
+      • 주택 수 구분(2주택 이하 / 3주택 이상)은 <b>2027년까지만</b> 유지되고, <b>2028년부터 주택 가액 기준 단일 세율표</b>로 통합됩니다.
+      즉 2주택 이하 보유자에게는 2028년에 12억 초과 구간이 한 번 더 올라갑니다.<br>
+      • 현행에서 3주택 이상 보유자는 과세표준 <b>12억 초과분부터</b> 중과세율이 붙습니다.<br>
+      • 2021년 열은 참고용 과거 최고점입니다. 세율만 보면 지금보다 높지만 <b>공정시장가액비율 95%</b>가 함께 걸려 있었다는 점을 같이 봐야 합니다.
+    </div></div>`;
 }
 
 /* ═══════════════════════════════════════════════════════════════════════════
@@ -2663,7 +2703,8 @@ buildSeg($('#scenSeg'), SCEN.map(s => ({ id:s.id, label:s.name })), 'y28', id =>
   activeScen = id;
   if (RESULT) paintHero();
 });
-buildSeg($('#rateSeg'), RATE_VIEWS.map(v => ({ id:v.id, label:v.label })), 'y28', paintRates);
+$('#rateDelta').addEventListener('change', paintRates);
+paintRates();
 bindAcc(document);
 
 run();
