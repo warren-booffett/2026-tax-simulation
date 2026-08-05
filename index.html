@@ -1088,6 +1088,34 @@ footer{padding:48px 0 60px;border-top:1px solid var(--hair);margin-top:36px;colo
       <p class="lead" style="margin-top:8px">현행·2027년·2028년 이후는 <b>개편안 그대로</b> 자동 계산됩니다. 아래는 <b>커스텀 시나리오</b>와 세대 정보만 조정하세요.</p>
     </div>
 
+    <!-- 해석이 갈리는 지점 -->
+    <div class="card pad-l reveal" style="margin-bottom:20px;border-color:var(--orange-soft)">
+      <div class="row between wrapf gap-12" style="margin-bottom:12px">
+        <h3 class="h3">⚖️ 해석이 갈리는 지점 — 다주택 과세 문턱</h3>
+        <span class="pill orange">결과가 달라집니다</span>
+      </div>
+      <p class="small" style="margin-bottom:14px">개편안은 <b>서로 다른 두 조문</b>을 함께 고쳤습니다.
+        현행법에서는 이 둘이 <b>같은 숫자(9억)</b>라 문제가 없었지만, 개편안에서는 갈라집니다.</p>
+      <div class="tw" style="margin-bottom:14px">
+        <table class="t" style="min-width:640px">
+          <thead><tr><th>조문</th><th>정하는 것</th><th>1세대 1주택</th><th>그 외 (다주택)</th></tr></thead>
+          <tbody>
+            <tr><td><b>§7①</b><span class="fx">원문 p.60</span></td><td class="tl-left">누가 <b>납세의무자</b>인가 (문턱)</td>
+              <td>14억 초과</td><td class="hv">9억 초과</td></tr>
+            <tr><td><b>§8①</b><span class="fx">원문 p.61</span></td><td class="tl-left">과세표준에서 <b>얼마를 빼주나</b> (공제)</td>
+              <td>거주 14억 / 비거주 9억</td><td class="hv">4억 + 5억 × 거주비중</td></tr>
+          </tbody>
+        </table>
+      </div>
+      <div class="seg" id="thSeg" style="max-width:560px"><span class="thumb"></span></div>
+      <div class="note warn" style="margin-top:14px"><span>⚠️</span><div>
+        <b>문언 그대로 읽으면 9억 지점에 세액 절벽이 생깁니다.</b> 비거주 다주택 기준으로
+        합산 공시가 9.0억이면 종부세 0원인데, 9.01억이 되는 순간 공제 4억이 적용되어
+        과세표준이 갑자기 <b>3.5억</b>으로 튀어 <b>연 200만원대</b>가 부과됩니다.
+        이런 절벽은 입법 과정에서 정리되는 경우가 많아, <b>국회 심의·시행령 확정 전까지는 두 해석을 모두 놓고 보는 것이 안전합니다.</b>
+      </div></div>
+    </div>
+
     <div class="grid g2 reveal" style="gap:20px;align-items:start">
       <div class="card pad-l">
         <div class="row between" style="margin-bottom:16px">
@@ -1186,6 +1214,15 @@ footer{padding:48px 0 60px;border-top:1px solid var(--hair);margin-top:36px;colo
       </div>
       <div class="sedae" id="sedaeCards"></div>
       <div id="sedaeNotes"></div>
+    </div>
+
+    <!-- 문턱 해석 분기 -->
+    <div class="card pad-l reveal hide" id="forkCard" style="margin-bottom:18px;border-color:var(--orange)">
+      <div class="row between wrapf gap-12" style="margin-bottom:12px">
+        <h3 class="h3">⚖️ 이 조건은 <span style="color:var(--orange)">해석에 따라 결과가 달라집니다</span></h3>
+        <span class="pill orange">확인 필요</span>
+      </div>
+      <div id="forkBody"></div>
     </div>
 
     <!-- Hero result -->
@@ -1454,6 +1491,24 @@ const rateLive        = y => y >= 15 ? .50 : y >= 10 ? .40 : y >= 5 ? .20 : 0;  
 const rateHold2027    = y => y >= 15 ? .25 : y >= 10 ? .20 : y >= 5 ? .10 : 0;   // 2027 한정 보유공제(거주의 1/2)
 const rateAge         = a => a >= 70 ? .40 : a >= 65 ? .30 : a >= 60 ? .20 : 0;
 
+/* ── 다주택 과세 문턱 해석 ──────────────────────────────────────────────
+   개편안은 서로 다른 두 조문을 동시에 건드렸다.
+     §7①(p.60) 납세의무자 : 1세대 1주택 14억 초과 / 그 외 9억 초과
+     §8①(p.61) 기본공제   : 1주택 거주 14억 / 1주택 비거주 9억 / 그 외 4억 + 5억×거주비중
+   현행법은 두 숫자가 같아서 문제가 없었지만, 개편안에서는 갈라진다.
+     'law' = 원문 문언 그대로. 문턱은 9억, 넘으면 공제 4억 적용 → 9억 지점에 세액 절벽 발생
+     'ded' = 문턱도 기본공제와 같이 내려간다는 해석. 4억 초과부터 과세, 절벽 없음
+   두 해석은 '공제액 초과 ~ 9억' 구간에서만 결과가 다르다. */
+let THMODE = 'law';
+
+/* 개편안 기본공제 (§8①) */
+const dedReform = c => c.is1H ? (c.resides ? 140000 : 90000)
+                              : (40000 + 50000 * c.resRatio);
+/* 개편안 납세의무자 문턱 (§7①) */
+const thReform  = c => c.is1H ? 140000 : 90000;
+/* 실제 적용 문턱 — 해석 스위치 반영 */
+const thApplied = c => THMODE === 'ded' ? Math.min(dedReform(c), thReform(c)) : thReform(c);
+
 /**
  * 시나리오 정의
  *  ctx = { is1H, cnt, gaSum, resides, resRatio, hasAdj, holdY, liveY, age }
@@ -1473,9 +1528,9 @@ const SCEN = [
   {
     id:'y27', name:'2027년', sub:'개편안 1단계', ac:'var(--violet)', key:'violet',
     ptReal:()=>.69, ptSpecial:()=>true, ptFmvr:()=>.60,
-    threshold:c => c.is1H ? 140000 : 90000,
+    threshold: thApplied,
     /* 다주택: 4억 + (5억 × 거주주택 공시가/합계액) — 최대 9억 ~ 최소 4억 (원문 p.61) */
-    deduct:   c => c.is1H ? (c.resides ? 140000 : 90000) : (40000 + 50000 * c.resRatio),
+    deduct:   dedReform,
     dedNote:  c => c.is1H ? (c.resides ? '1주택 거주 14억' : '1주택 비거주 9억')
                           : `4억 + 5억×${(c.resRatio*100).toFixed(0)}%`,
     jbFmvr:   ()=>.70,
@@ -1490,9 +1545,9 @@ const SCEN = [
   {
     id:'y28', name:'2028년~', sub:'개편안 완성', ac:'var(--orange)', key:'orange',
     ptReal:()=>.69, ptSpecial:()=>true, ptFmvr:()=>.60,
-    threshold:c => c.is1H ? 140000 : 90000,
+    threshold: thApplied,
     /* 다주택: 4억 + (5억 × 거주주택 공시가/합계액) — 최대 9억 ~ 최소 4억 (원문 p.61) */
-    deduct:   c => c.is1H ? (c.resides ? 140000 : 90000) : (40000 + 50000 * c.resRatio),
+    deduct:   dedReform,
     dedNote:  c => c.is1H ? (c.resides ? '1주택 거주 14억' : '1주택 비거주 9억')
                           : `4억 + 5억×${(c.resRatio*100).toFixed(0)}%`,
     /* 3주택 이상 또는 조정대상지역 주택 보유자(1세대 1주택자 제외) → 80% */
@@ -1515,7 +1570,8 @@ const SCEN = [
   {
     id:'cust', name:'커스텀', sub:'내 설정', ac:'var(--slate)', key:'slate',
     ptReal:()=>CU().real, ptSpecial:()=>false, ptFmvr:()=>CU().ptF,
-    threshold:c => c.is1H ? CU().ded1 : CU().dedM,
+    /* 커스텀은 사용자가 직접 세우는 가정이므로 문턱 = 공제 (절벽 없음) */
+    threshold:c => c.is1H ? CU().ded1 : (CU().dedM + CU().dedR * c.resRatio),
     deduct:   c => c.is1H ? CU().ded1 : (CU().dedM + CU().dedR * c.resRatio),
     dedNote:  c => c.is1H ? '1주택 공제' : `다주택 + 거주가산 ${(c.resRatio*100).toFixed(0)}%`,
     jbFmvr:   ()=>CU().jbF,
@@ -1725,10 +1781,11 @@ function computeOwner(ownerAssets, s, meta){
     resides: ownerAssets.some(a => a.res),
     resRatio,
     hasAdj: ownerAssets.some(a => a.reg),
-    holdY: yearsSince(ownerAssets[0]?.date),
-    liveY: ownerAssets.some(a => a.res)
-             ? yearsSince((ownerAssets.find(a => a.res) || {}).live)
-             : 0,
+    /* 세액공제 보유기간은 가장 오래 보유한 주택 기준.
+       배열 첫 항목을 쓰면 일시적 2주택에서 '신규주택'이 잡혀 기간이 짧게 나온다. */
+    holdY: Math.max(0, ...ownerAssets.map(a => yearsSince(a.date))),
+    /* 거주기간도 가장 오래 거주한 주택 기준 */
+    liveY: Math.max(0, ...ownerAssets.filter(a => a.res).map(a => yearsSince(a.live))),
     age: meta.age
   };
 
@@ -1793,34 +1850,50 @@ function run(){
     return married ? own : own.filter(r => r.owner === o || r.owner === 'joint');
   };
 
-  const owners = { husband:{}, wife:{}, other:{}, household:{} };
-  const detail = [];
-  const judge  = {};
-
+  const judge = {};
   OWNERS.forEach(o => {
-    const mine = assets.filter(a => a.owner === o);
-    const sr   = sedaeRows(o);
+    const sr = sedaeRows(o);
     const cntSedae = sr.length;                        // 실제 세대 주택 수
     const cntJb    = sr.filter(r => !r.tmp).length;    // 일시적 2주택 특례 적용 후
     judge[o] = { cntSedae, cntJb, is1Hpt: cntSedae === 1, is1Hjb: cntJb === 1,
-                 tmpUsed: cntSedae !== cntJb, mineCnt: mine.length };
-    SCEN.forEach(s => {
-      if (!mine.length){ owners[o][s.id] = { pt:0, jb:0, total:0, items:[], empty:true }; return; }
-      const r = computeOwner(mine, s, {
-        is1Hpt: judge[o].is1Hpt, is1Hjb: judge[o].is1Hjb, age: ages[o] });
-      owners[o][s.id] = r;
-      detail.push({ owner:o, scen:s.id, r });
-    });
+                 tmpUsed: cntSedae !== cntJb,
+                 mineCnt: assets.filter(a => a.owner === o).length };
   });
 
-  SCEN.forEach(s => {
-    const sum = k => OWNERS.reduce((t,o) => t + (owners[o][s.id]?.[k] || 0), 0);
-    owners.household[s.id] = { pt: sum('pt'), jb: sum('jb'), total: sum('total') };
-  });
+  /* 현재 THMODE 기준으로 전원·전 시나리오 계산 */
+  const computeAll = () => {
+    const owners = { husband:{}, wife:{}, other:{}, household:{} };
+    const detail = [];
+    OWNERS.forEach(o => {
+      const mine = assets.filter(a => a.owner === o);
+      SCEN.forEach(s => {
+        if (!mine.length){ owners[o][s.id] = { pt:0, jb:0, total:0, items:[], empty:true }; return; }
+        const r = computeOwner(mine, s, {
+          is1Hpt: judge[o].is1Hpt, is1Hjb: judge[o].is1Hjb, age: ages[o] });
+        owners[o][s.id] = r;
+        detail.push({ owner:o, scen:s.id, r });
+      });
+    });
+    SCEN.forEach(s => {
+      const sum = k => OWNERS.reduce((t,o) => t + (owners[o][s.id]?.[k] || 0), 0);
+      owners.household[s.id] = { pt: sum('pt'), jb: sum('jb'), total: sum('total') };
+    });
+    return { owners, detail };
+  };
+
+  const { owners, detail } = computeAll();
+
+  /* 반대 해석으로도 한 번 더 계산해 차이를 보여준다 */
+  const keep = THMODE;
+  THMODE = keep === 'law' ? 'ded' : 'law';
+  const alt = computeAll().owners;
+  THMODE = keep;
 
   RESULT = { owners, detail, married, houses, houseRows, judge,
-             oneSedae, hasOther, otherSep, tmp: tmpDeadline(houseRows) };
+             oneSedae, hasOther, otherSep, tmp: tmpDeadline(houseRows),
+             thMode: keep, alt };
   paintSedae();
+  paintFork();
   paintHero();
   paintBars();
   paintOwnerCards();
@@ -1941,6 +2014,65 @@ function paintSedae(){
       : !tmp ? '종전주택이 없어 특례를 적용할 수 없습니다'
       : `종전주택 양도기한 <b>${tmp.dueStr}</b> (${tmp.years}년 룰)`;
   });
+}
+
+const TH_LABEL = {
+  law: '§7① 문언 그대로 — 다주택 문턱 9억',
+  ded: '문턱도 공제와 함께 — 4억 + 5억×거주비중 초과부터'
+};
+
+/* 두 해석의 결과가 갈리면 나란히 보여준다 */
+function paintFork(){
+  const card = $('#forkCard');
+  if (!RESULT){ card.classList.add('hide'); return; }
+
+  const cur = RESULT.owners.household, alt = RESULT.alt.household;
+  const diffs = SCEN.filter(s => Math.abs(cur[s.id].total - alt[s.id].total) > 0.5);
+  if (!diffs.length){ card.classList.add('hide'); return; }
+  card.classList.remove('hide');
+
+  const other = RESULT.thMode === 'law' ? 'ded' : 'law';
+
+  /* 어떤 사람이 왜 갈리는지 */
+  const who = [];
+  OWNERS.forEach(o => {
+    const a = RESULT.owners[o][activeScen], b = RESULT.alt[o][activeScen];
+    if (!a || a.empty || Math.abs(a.total - b.total) <= 0.5) return;
+    const j = (a.jbInfo.taxable ? a : b).jbInfo;
+    who.push(`<li>• <b>${OWNER_LABEL[o]}</b> — 합산 공시가 <b>${fmtEok(j.gaSum)}</b> ·
+      기본공제 <b>${fmtEok(j.ded)}</b> ~ 문턱 <b>${fmtEok(thReform(j.ctx))}</b> <b>사이 구간</b>입니다</li>`);
+  });
+
+  const rows = SCEN.map(s => {
+    const c = cur[s.id].total, a = alt[s.id].total;
+    const same = Math.abs(c - a) <= 0.5;
+    const lo = Math.min(c, a), hi = Math.max(c, a);
+    return `<tr>
+      <td class="tl-left" style="color:${s.ac};font-weight:800">${s.name}<span class="fx">${s.sub}</span></td>
+      <td class="${RESULT.thMode === 'law' ? 'hl' : ''}">${fmtNum(RESULT.thMode === 'law' ? c : a)}만</td>
+      <td class="${RESULT.thMode === 'ded' ? 'hl' : ''}">${fmtNum(RESULT.thMode === 'ded' ? c : a)}만</td>
+      <td class="${same ? '' : 'hv'}">${same ? '동일' : `${fmtNum(hi - lo)}만 차이`}</td></tr>`;
+  }).join('');
+
+  $('#forkBody').innerHTML = `
+    <p class="small" style="margin-bottom:12px">지금 조건은 합산 공시가격이
+      <b>「기본공제액 ~ 9억」 구간</b>에 들어 있어, 앞의 두 조문 중 어느 쪽으로 읽느냐에 따라
+      <b>종부세가 0원이 되기도 하고 부과되기도 합니다.</b></p>
+    ${who.length ? `<ul class="stack gap-8 small" style="margin-bottom:14px">${who.join('')}</ul>` : ''}
+    <div class="tw" style="margin-bottom:14px">
+      <table class="t" style="min-width:680px">
+        <thead><tr><th class="tl-left">시나리오</th>
+          <th>문턱 9억<span class="fx">§7① 문언</span></th>
+          <th>문턱 = 공제<span class="fx">4억 + 5억×거주비중</span></th>
+          <th>차이</th></tr></thead>
+        <tbody>${rows}</tbody></table>
+    </div>
+    <div class="note warn"><span>🧭</span><div>
+      현재 <b>「${TH_LABEL[RESULT.thMode]}」</b> 기준으로 위쪽 결과를 표시하고 있습니다.
+      시나리오 설정의 <b>⚖️ 해석이 갈리는 지점</b>에서 전환할 수 있습니다.<br>
+      <b>투자 감당 여부를 볼 때는 보수적인 쪽(세금이 더 나오는 쪽)으로 한 번 확인해 두시길 권합니다.</b>
+      확정된 것은 아니며, 국회 세법개정안 통과와 시행령으로 정리될 부분입니다.
+    </div></div>`;
 }
 
 function paintHero(){
@@ -2929,8 +3061,11 @@ $('#mxres-chips').addEventListener('click', e => {
 
 buildSeg($('#scenSeg'), SCEN.map(s => ({ id:s.id, label:s.name })), 'y28', id => {
   activeScen = id;
-  if (RESULT) paintHero();
+  if (RESULT){ paintHero(); paintFork(); }
 });
+buildSeg($('#thSeg'),
+  [{ id:'law', label:'문턱 9억 (§7① 문언)' }, { id:'ded', label:'문턱 = 기본공제' }],
+  'law', id => { THMODE = id; if (RESULT) run(); });
 $('#rateDelta').addEventListener('change', paintRates);
 paintRates();
 bindAcc(document);
