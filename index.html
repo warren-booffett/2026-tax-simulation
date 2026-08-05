@@ -1134,12 +1134,24 @@ footer{padding:48px 0 60px;border-top:1px solid var(--hair);margin-top:36px;colo
             <label>세대원과 별도 세대로 판정<span class="fx">동거봉양 합가 10년 / 혼인 5년 특례</span></label>
             <span class="sw"><input type="checkbox" id="sedae-split"><span></span></span>
           </div>
+          <div class="inline-field">
+            <label>부부 공동명의 1주택 특례 신청<span class="fx">종부법 §10의2 · 세대 1주택이 공동명의일 때만</span></label>
+            <span class="sw"><input type="checkbox" id="joint-special"><span></span></span>
+          </div>
+          <div class="inline-field"><label>└ 대표 납세의무자</label>
+            <select id="joint-rep"><option value="husband">남편</option><option value="wife">아내</option></select></div>
         </div>
         <div class="note" style="margin-top:14px"><span>ℹ️</span><div>혼인신고를 켜면 <b>부부 합산 1주택</b>일 때만 1세대 1주택 특례(공제 확대·세액공제)가 적용됩니다. 끄면 각자 명의 기준으로 판정합니다.</div></div>
         <div class="note warn" style="margin-top:10px"><span>👪</span><div><b>세대분리를 안 했다면</b> 자산 입력에서 부모님 집의 소유주를 <b>「세대원(부모님 등)」</b>으로 넣으세요.
           종부세는 <b>인별 과세</b>라 부모님 집 공시가격이 내 과세표준에 합산되지는 않지만,
           <b>1세대 1주택 판정에서는 세대 주택 수에 포함</b>되어 내 공제가 14억 → 다주택 공제로 떨어집니다.
           이 두 가지는 별개로 움직이므로, 부모님 집을 남편·아내 칸에 넣으면 <b>과세표준이 잘못 부풀려집니다</b>.</div></div>
+        <div class="note warn" style="margin-top:10px"><span>💍</span><div><b>부부 공동명의는 「1세대 1주택자」가 아닙니다.</b>
+          종부세법상 1세대 1주택자는 세대원 중 <b>1명이 단독으로</b> 1주택을 소유한 경우입니다.
+          공동명의는 각자 <b>「그 외」</b>로 보아 기본공제가 <b>4억 + 5억×거주비중</b>이 됩니다 —
+          <b>실거주면 각자 9억(합 18억)</b>이지만 <b>비거주면 각자 4억(합 8억)</b>으로 줄어듭니다.
+          이때 <b>§10의2 특례를 신청</b>하면 한 명이 주택 전체에 대해 1세대 1주택자로 과세되어
+          비거주 기준 <b>9억</b>을 공제받습니다(8억 → 9억). 위 스위치로 비교해 보세요.</div></div>
         <div class="note info" style="margin-top:10px"><span>🧓</span><div><b>「세대원과 별도 세대로 판정」</b>은 종부령 §1의2 특례입니다 —
           <b>60세 이상 직계존속을 동거봉양</b>하려고 <b>합가</b>한 경우 합가일부터 <b>10년</b>, 혼인 합가는 <b>5년</b> 동안 각각 별도 세대로 봅니다.
           주민등록만 같이 두고 원래부터 함께 살던 경우는 <b>합가에 해당하지 않아</b> 적용되지 않으니, 켜기 전에 요건을 확인하세요.</div></div>
@@ -1696,8 +1708,9 @@ function collect(){
     const res   = r.querySelector('.a-res').value === 'Y';
     const tmp   = r.querySelector('.a-tmp').checked;   // 일시적 2주택 신규주택
     r.classList.toggle('tmp-on', tmp);
-    houseRows.push({ name, owner, price, date, reg, res, tmp });
-    const base = { price, full:price, date, live, reg, res, tmp };
+    const idx = houseRows.length;
+    houseRows.push({ name, owner, price, date, live, reg, res, tmp, idx });
+    const base = { price, full:price, date, live, reg, res, tmp, idx };
     if (owner === 'joint'){
       assets.push({ ...base, name:name+' (50%)', owner:'husband', price:price/2, share:.5 });
       assets.push({ ...base, name:name+' (50%)', owner:'wife',    price:price/2, share:.5 });
@@ -1831,7 +1844,8 @@ function computeOwner(ownerAssets, s, meta){
 
 const OWNERS = ['husband','wife','other'];
 
-function run(){
+/* quiet=true 이면 RESULT만 갱신하고 화면은 그리지 않는다 (유불리 비교용 재계산) */
+function run(quiet){
   const { assets, houseRows, houses } = collect();
   const married = $('#marriage-status').checked;
   const ages = { husband: num($('#age-husband').value), wife: num($('#age-wife').value),
@@ -1850,14 +1864,35 @@ function run(){
     return married ? own : own.filter(r => r.owner === o || r.owner === 'joint');
   };
 
+  /* 부부 공동명의 1주택 특례 (종부법 §10의2)
+     세대의 유일한 주택이 공동명의일 때만 신청 가능. 신청하면 대표 1인이
+     주택 전체에 대해 1세대 1주택자로 과세된다(공제 14억/9억 + 세액공제). */
+  const jointRep = $('#joint-rep').value;
+  const keptAll  = houseRows.filter(r => !r.tmp);
+  const jointOne = (keptAll.length === 1 && keptAll[0].owner === 'joint') ? keptAll[0] : null;
+  const jointSpecial = $('#joint-special').checked && !!jointOne;
+
+  /* 특례 신청 시 공동명의 지분 2건을 대표자 1건으로 합친다 */
+  const assetsUse = !jointSpecial ? assets
+    : assets.filter(a => a.idx !== jointOne.idx)
+            .concat([{ ...jointOne, owner: jointRep, full: jointOne.price, share: 1 }]);
+
   const judge = {};
   OWNERS.forEach(o => {
     const sr = sedaeRows(o);
     const cntSedae = sr.length;                        // 실제 세대 주택 수
-    const cntJb    = sr.filter(r => !r.tmp).length;    // 일시적 2주택 특례 적용 후
-    judge[o] = { cntSedae, cntJb, is1Hpt: cntSedae === 1, is1Hjb: cntJb === 1,
+    const kept     = sr.filter(r => !r.tmp);           // 일시적 2주택 특례 적용 후
+    const cntJb    = kept.length;
+    const sole     = cntJb === 1 ? kept[0] : null;
+    /* 종부세 '1세대 1주택자' = 세대원 1명이 1주택을 '단독으로' 소유.
+       공동명의는 해당하지 않는다(§10의2 특례를 신청한 대표자만 의제). */
+    const is1Hjb = !sole ? false
+                 : sole.owner === 'joint' ? (jointSpecial && o === jointRep)
+                 : sole.owner === o;
+    judge[o] = { cntSedae, cntJb, is1Hpt: cntSedae === 1, is1Hjb,
                  tmpUsed: cntSedae !== cntJb,
-                 mineCnt: assets.filter(a => a.owner === o).length };
+                 jointBlocked: !!sole && sole.owner === 'joint' && !jointSpecial,
+                 mineCnt: assetsUse.filter(a => a.owner === o).length };
   });
 
   /* 현재 THMODE 기준으로 전원·전 시나리오 계산 */
@@ -1865,7 +1900,7 @@ function run(){
     const owners = { husband:{}, wife:{}, other:{}, household:{} };
     const detail = [];
     OWNERS.forEach(o => {
-      const mine = assets.filter(a => a.owner === o);
+      const mine = assetsUse.filter(a => a.owner === o);
       SCEN.forEach(s => {
         if (!mine.length){ owners[o][s.id] = { pt:0, jb:0, total:0, items:[], empty:true }; return; }
         const r = computeOwner(mine, s, {
@@ -1891,7 +1926,8 @@ function run(){
 
   RESULT = { owners, detail, married, houses, houseRows, judge,
              oneSedae, hasOther, otherSep, tmp: tmpDeadline(houseRows),
-             thMode: keep, alt };
+             thMode: keep, alt, jointOne, jointSpecial, jointRep };
+  if (quiet) return;
   paintSedae();
   paintFork();
   paintHero();
@@ -1911,7 +1947,8 @@ const OWNER_LABEL = { husband:'남편', wife:'아내', other:'세대원(부모�
 /* 세대 주택 수 · 1세대 1주택 판정 · 일시적 2주택 기한 */
 function paintSedae(){
   if (!RESULT) return;
-  const { houseRows, judge, oneSedae, hasOther, otherSep, tmp, married } = RESULT;
+  const { houseRows, judge, oneSedae, hasOther, otherSep, tmp, married,
+          jointOne, jointSpecial, jointRep } = RESULT;
 
   $('#sedaeMode').textContent =
       hasOther && otherSep ? '세대원 별도 세대 (합가 특례)'
@@ -1927,7 +1964,8 @@ function paintSedae(){
   /* 배너는 '본인(부부) 세대' 기준으로 보여준다 */
   const cntSedae = Math.max(judge.husband.cntSedae, judge.wife.cntSedae);
   const cntJb    = Math.max(judge.husband.cntJb,    judge.wife.cntJb);
-  const one = cntJb === 1;
+  const one = judge.husband.is1Hjb || judge.wife.is1Hjb;
+  const blocked = judge.husband.jointBlocked || judge.wife.jointBlocked;
 
   const cards = [
     `<div class="sd"><div class="k">내 세대 주택 수</div><div class="v">${cntSedae}채</div>
@@ -1937,8 +1975,10 @@ function paintSedae(){
        <div class="s">${tmp ? `일시적 2주택 특례로 <b>${tmp.nw.name}</b> 제외` : '특례 적용 없음'}</div></div>`,
     `<div class="sd ${one ? 'ok' : 'bad'}"><div class="k">1세대 1주택자</div>
        <div class="v">${one ? '○ 해당' : '✕ 비해당'}</div>
-       <div class="s">${one ? '기본공제 14억(거주) · 세액공제 적용'
-                            : '기본공제 4억 + 5억×거주비중 · <b>세액공제 배제</b>'}</div></div>`
+       <div class="s">${one ? (jointSpecial ? '§10의2 특례로 대표자 1인 의제<br>' : '')
+                              + '기본공제 14억(거주) / 9억(비거주) · 세액공제 적용'
+                            : (blocked ? '<b>공동명의라 단독소유 요건 미충족</b><br>' : '')
+                              + '기본공제 4억 + 5억×거주비중 · <b>세액공제 배제</b>'}</div></div>`
   ];
 
   if (tmp){
@@ -1950,6 +1990,33 @@ function paintSedae(){
   $('#sedaeCards').innerHTML = cards.join('');
 
   const notes = [];
+
+  if (jointOne){
+    const cb = $('#joint-special');
+    const on = cb.checked;
+    /* 반대 선택으로도 계산해 유불리를 비교 */
+    cb.checked = !on;
+    const swap = (() => { const prev = RESULT; run(true);
+                          const v = RESULT.owners.household[activeScen].total;
+                          RESULT = prev; return v; })();
+    cb.checked = on;
+    const now  = RESULT.owners.household[activeScen].total;
+    const better = swap < now - 0.5;
+    notes.push(`<div class="note ${better ? 'warn' : 'info'}"><span>💍</span><div>
+      세대의 유일한 주택 <b>${jointOne.name}</b>이 <b>부부 공동명의</b>입니다.
+      종부세법상 1세대 1주택자는 <b>1명이 단독으로</b> 소유한 경우라, 공동명의는 각자
+      <b>「그 외」</b>로 보아 기본공제가 <b>4억 + 5억×거주비중</b>이 됩니다 —
+      <b>${jointOne.res ? '실거주 중이므로 각자 9억(합 18억)' : '비거주라 각자 4억(합 8억)으로 축소'}</b>.<br>
+      <b>§10의2 부부 공동명의 1주택 특례</b>를 신청하면 대표 1인이 주택 전체에 대해
+      1세대 1주택자로 과세됩니다(공제 14억/9억 + 세액공제).<br>
+      ${activeScen === 'curr' ? '' : `<b>${SC[activeScen].name} 기준 —</b> `}
+      현재 <b>${on ? '신청' : '미신청'}</b> 상태 <b>${fmtNum(now)}만원</b> ·
+      ${on ? '미신청' : '신청'} 시 <b>${fmtNum(swap)}만원</b> →
+      ${better ? `<b style="color:var(--red)">${on ? '미신청' : '신청'}이 ${fmtNum(now - swap)}만원 유리합니다.</b>`
+               : Math.abs(swap - now) <= 0.5 ? '차이 없습니다.'
+               : `<b style="color:var(--green)">지금 선택이 ${fmtNum(swap - now)}만원 유리합니다.</b>`}
+      </div></div>`);
+  }
 
   if (hasOther && !otherSep){
     notes.push(`<div class="note info"><span>👪</span><div>
