@@ -432,8 +432,26 @@ table.mx td[title]{cursor:help}
 .asset.enter{opacity:0;transform:translateY(-8px) scale(.98)}
 .asset.leaving{opacity:0;transform:scale(.96);}
 .c2{grid-column:span 2}.c3{grid-column:span 3}.c4{grid-column:span 4}.c1{grid-column:span 1}
+.cfull{grid-column:1/-1}
 @media(max-width:960px){.asset{grid-template-columns:repeat(6,minmax(0,1fr))}.c2,.c3,.c4{grid-column:span 3}.c1{grid-column:span 6}}
 @media(max-width:520px){.asset{grid-template-columns:repeat(2,minmax(0,1fr))}.c2,.c3,.c4{grid-column:span 1}.c1{grid-column:span 2}}
+
+/* 자산 행 하단 — 일시적 2주택 플래그 */
+.tmprow{display:flex;align-items:center;gap:9px;flex-wrap:wrap;margin-top:2px;padding-top:11px;
+  border-top:1px dashed var(--hair);font-size:.78rem;font-weight:650;color:var(--text-2);cursor:pointer}
+.tmprow input{width:16px;height:16px;accent-color:var(--violet);cursor:pointer;flex:0 0 auto}
+.tmprow .tmpnote{font-size:.72rem;font-weight:600;color:var(--text-3)}
+.asset.tmp-on{border-color:var(--violet);background:var(--violet-soft)}
+
+/* 세대 판정 배너 */
+.sedae{display:flex;flex-wrap:wrap;gap:10px;margin:0 0 20px}
+.sedae .sd{flex:1 1 190px;background:var(--card-2);border:1px solid var(--hair);border-radius:var(--r-m);padding:13px 15px;text-align:left}
+.sedae .sd .k{font-size:.68rem;font-weight:750;letter-spacing:.04em;color:var(--text-3);text-transform:uppercase}
+.sedae .sd .v{font-size:1.06rem;font-weight:820;letter-spacing:-.02em;margin-top:5px}
+.sedae .sd .s{font-size:.72rem;font-weight:600;color:var(--text-3);margin-top:4px;line-height:1.45}
+.sedae .sd.ok{border-color:var(--green);background:var(--green-soft)}
+.sedae .sd.bad{border-color:var(--red);background:var(--red-soft)}
+.sedae .sd.warn{border-color:var(--orange);background:var(--orange-soft)}
 .del{width:100%;height:40px;border-radius:var(--r-s);border:1px solid var(--hair);background:var(--bg-2);color:var(--text-3);
   font-weight:700;transition:all .28s var(--ease),transform .35s var(--spring)}
 .del:hover{color:var(--red);background:var(--red-soft);border-color:transparent}
@@ -1079,12 +1097,24 @@ footer{padding:48px 0 60px;border-top:1px solid var(--hair);margin-top:36px;colo
         <div class="stack gap-12">
           <div class="inline-field"><label>남편 나이 (만)</label><input type="number" id="age-husband" value="32" min="0" max="120"></div>
           <div class="inline-field"><label>아내 나이 (만)</label><input type="number" id="age-wife" value="32" min="0" max="120"></div>
+          <div class="inline-field"><label>세대원 나이 (만)<span class="fx">부모님 등 · 세대분리 전</span></label><input type="number" id="age-other" value="65" min="0" max="120"></div>
           <div class="inline-field">
             <label>혼인신고 (1세대로 합산)</label>
             <span class="sw"><input type="checkbox" id="marriage-status"><span></span></span>
           </div>
+          <div class="inline-field">
+            <label>세대원과 별도 세대로 판정<span class="fx">동거봉양 합가 10년 / 혼인 5년 특례</span></label>
+            <span class="sw"><input type="checkbox" id="sedae-split"><span></span></span>
+          </div>
         </div>
         <div class="note" style="margin-top:14px"><span>ℹ️</span><div>혼인신고를 켜면 <b>부부 합산 1주택</b>일 때만 1세대 1주택 특례(공제 확대·세액공제)가 적용됩니다. 끄면 각자 명의 기준으로 판정합니다.</div></div>
+        <div class="note warn" style="margin-top:10px"><span>👪</span><div><b>세대분리를 안 했다면</b> 자산 입력에서 부모님 집의 소유주를 <b>「세대원(부모님 등)」</b>으로 넣으세요.
+          종부세는 <b>인별 과세</b>라 부모님 집 공시가격이 내 과세표준에 합산되지는 않지만,
+          <b>1세대 1주택 판정에서는 세대 주택 수에 포함</b>되어 내 공제가 14억 → 다주택 공제로 떨어집니다.
+          이 두 가지는 별개로 움직이므로, 부모님 집을 남편·아내 칸에 넣으면 <b>과세표준이 잘못 부풀려집니다</b>.</div></div>
+        <div class="note info" style="margin-top:10px"><span>🧓</span><div><b>「세대원과 별도 세대로 판정」</b>은 종부령 §1의2 특례입니다 —
+          <b>60세 이상 직계존속을 동거봉양</b>하려고 <b>합가</b>한 경우 합가일부터 <b>10년</b>, 혼인 합가는 <b>5년</b> 동안 각각 별도 세대로 봅니다.
+          주민등록만 같이 두고 원래부터 함께 살던 경우는 <b>합가에 해당하지 않아</b> 적용되지 않으니, 켜기 전에 요건을 확인하세요.</div></div>
       </div>
 
       <div class="card pad-l" style="border-color:var(--slate-soft)">
@@ -1148,10 +1178,20 @@ footer{padding:48px 0 60px;border-top:1px solid var(--hair);margin-top:36px;colo
       <h2 class="h2" style="margin-top:6px">계산 결과</h2>
     </div>
 
+    <!-- 세대 판정 -->
+    <div class="card pad-l reveal" id="sedaeCard" style="margin-bottom:18px">
+      <div class="row between wrapf gap-12" style="margin-bottom:14px">
+        <h3 class="h3">👪 세대 판정 — 1세대 1주택인가?</h3>
+        <span class="pill" id="sedaeMode">부부 각자 세대</span>
+      </div>
+      <div class="sedae" id="sedaeCards"></div>
+      <div id="sedaeNotes"></div>
+    </div>
+
     <!-- Hero result -->
     <div class="card pad-l reveal hero-card" id="heroResult">
       <div class="seg" id="scenSeg" style="max-width:640px;margin:0 auto 24px"><span class="thumb"></span></div>
-      <div class="tiny" id="heroLabel" style="font-weight:700">가구 합산 연간 보유세</div>
+      <div class="tiny" id="heroLabel" style="font-weight:700">세대 합산 연간 보유세</div>
       <div class="big-num mono" id="heroNum" style="margin:8px 0 4px">0<span style="font-size:.4em;font-weight:700"> 만원</span></div>
       <div class="row gap-8" style="justify-content:center;flex-wrap:wrap;margin-top:10px">
         <span class="delta same" id="heroDelta">현행 대비 –</span>
@@ -1166,7 +1206,7 @@ footer{padding:48px 0 60px;border-top:1px solid var(--hair);margin-top:36px;colo
     <!-- Bars -->
     <div class="card pad-l reveal" style="margin-top:18px">
       <div class="row between wrapf gap-12" style="margin-bottom:20px">
-        <h3 class="h3">📊 시나리오 비교 · 가구 합산</h3>
+        <h3 class="h3">📊 시나리오 비교 · 세대 합산</h3>
         <div class="row gap-8 wrapf">
           <button class="btn btn-sm" data-copy="summary">📋 요약 표 복사</button>
           <button class="btn btn-sm" data-shot="capSummary" data-mode="copy">🖼 캡처 복사</button>
@@ -1534,6 +1574,7 @@ function assetRowHTML(a){
         <option value="husband"${a.owner==='husband'?' selected':''}>남편</option>
         <option value="wife"${a.owner==='wife'?' selected':''}>아내</option>
         <option value="joint"${a.owner==='joint'?' selected':''}>공동명의</option>
+        <option value="other"${a.owner==='other'?' selected':''}>세대원 (부모님 등)</option>
       </select></div>
     <div class="field c2"><label>공시가격 (만원)</label><input type="number" class="a-price" value="${a.price}" placeholder="54000">
       <span class="tiny a-sise" style="padding-left:2px">시가 약 –</span></div>
@@ -1544,6 +1585,9 @@ function assetRowHTML(a){
       <select class="a-res"><option value="N"${a.res==='N'?' selected':''}>비거주</option><option value="Y"${a.res==='Y'?' selected':''}>실거주</option></select></div>
     <div class="field c1 a-livewrap${a.res==='Y'?'':' hide'}"><label>거주 개시일</label><input type="date" class="a-live" value="${a.live||''}"></div>
     <div class="c1" style="align-self:end"><button class="del" title="삭제">✕</button></div>
+    <label class="tmprow cfull"><input type="checkbox" class="a-tmp"${a.tmp?' checked':''}>
+      <span>일시적 2주택 <b>신규주택</b> — 종부세 1세대 1주택 판정에서 주택 수 제외</span>
+      <span class="tmpnote a-tmpnote"></span></label>
   </div>`;
 }
 
@@ -1584,8 +1628,8 @@ function paintAssetSise(){
 function collect(){
   paintAssetSise();
   const rows = $$('.asset');
-  const houses = rows.length;                       // 세대 전체 주택 수
-  const assets = [];
+  const houses = rows.length;                       // 세대 전체 주택 수 (물건 기준)
+  const assets = [], houseRows = [];
   rows.forEach(r => {
     const name  = r.querySelector('.a-name').value || '(무제)';
     const owner = r.querySelector('.a-owner').value;
@@ -1594,7 +1638,10 @@ function collect(){
     const live  = r.querySelector('.a-live').value;
     const reg   = r.querySelector('.a-reg').value === 'Y';
     const res   = r.querySelector('.a-res').value === 'Y';
-    const base  = { price, full:price, date, live, reg, res };
+    const tmp   = r.querySelector('.a-tmp').checked;   // 일시적 2주택 신규주택
+    r.classList.toggle('tmp-on', tmp);
+    houseRows.push({ name, owner, price, date, reg, res, tmp });
+    const base = { price, full:price, date, live, reg, res, tmp };
     if (owner === 'joint'){
       assets.push({ ...base, name:name+' (50%)', owner:'husband', price:price/2, share:.5 });
       assets.push({ ...base, name:name+' (50%)', owner:'wife',    price:price/2, share:.5 });
@@ -1602,7 +1649,32 @@ function collect(){
       assets.push({ ...base, name, owner, share:1 });
     }
   });
-  return { assets, houses };
+  return { assets, houseRows, houses };
+}
+
+/* ── 일시적 2주택 — 종전주택 양도기한 ──
+   개편안 4-1(소득령 §155①·종부령 §4의2①): 조정대상지역 종전주택 보유 중
+   조정대상지역 신규주택을 취득한 경우만 3년 → 2년.
+   경과조치: 2026.8.3. 이전 취득(또는 계약금 지급)분은 종전 3년 유지. */
+const TMP_GRACE = new Date('2026-08-03').getTime();
+
+function tmpDeadline(houseRows){
+  const nw = houseRows.find(r => r.tmp);
+  if (!nw || !nw.date) return null;
+  /* 종전주택은 같은 쪽(본인·배우자 vs 세대원)에서 찾는다 */
+  const sameSide = r => (r.owner === 'other') === (nw.owner === 'other');
+  const others = houseRows.filter(r => r !== nw && sameSide(r));
+  if (!others.length) return null;
+  const old = others[0];                                    // 종전주택
+  const acq = new Date(nw.date).getTime();
+  if (isNaN(acq)) return null;
+  const grandfathered = acq <= TMP_GRACE;
+  const bothAdj = !!(nw.reg && old.reg);
+  const years = (bothAdj && !grandfathered) ? 2 : 3;
+  const due = new Date(nw.date); due.setFullYear(due.getFullYear() + years);
+  const days = Math.ceil((due.getTime() - Date.now()) / 86400000);
+  return { nw, old, years, bothAdj, grandfathered, due, days,
+           dueStr: due.toISOString().slice(0,10), expired: days < 0 };
 }
 
 const yearsSince = (iso, ref=new Date()) => {
@@ -1618,11 +1690,16 @@ const yearsSince = (iso, ref=new Date()) => {
 let RESULT = null;   // { owners:{husband,wife,household}, detail:[] }
 
 function computeOwner(ownerAssets, s, meta){
+  /* 재산세(지방세)와 종부세(국세)는 1세대 1주택 판정이 다르다.
+     일시적 2주택 특례는 종부령 §4의2 — 종부세 주택 수에서만 빼준다.
+     재산세 1주택 특례세율(지방세법 §111의2)에는 일시적 2주택 제외 규정이 없어 그대로 2주택. */
+  const is1Hpt = meta.is1Hpt, is1Hjb = meta.is1Hjb;
+
   /* ---- 재산세 ---- */
   let ptTotal = 0, ptPure = 0, ptBase = 0, gaSum = 0;
   const items = [];
   ownerAssets.forEach(a => {
-    const d = calcPT(a.full, meta.is1H, s);
+    const d = calcPT(a.full, is1Hpt, s);
     const it = {
       name: a.name,
       ga:   d.ga   * a.share,
@@ -1639,10 +1716,10 @@ function computeOwner(ownerAssets, s, meta){
 
   /* ---- 종부세 ---- */
   const resSum   = ownerAssets.filter(a => a.res)
-                    .reduce((t,a) => t + calcPT(a.full, meta.is1H, s).ga * a.share, 0);
+                    .reduce((t,a) => t + calcPT(a.full, is1Hpt, s).ga * a.share, 0);
   const resRatio = gaSum > 0 ? clamp(resSum / gaSum, 0, 1) : 0;
   const ctx = {
-    is1H: meta.is1H,
+    is1H: is1Hjb,
     cnt: ownerAssets.length,
     gaSum,
     resides: ownerAssets.some(a => a.res),
@@ -1669,7 +1746,7 @@ function computeOwner(ownerAssets, s, meta){
 
   /* 세액공제 (1세대 1주택자만) */
   let creditRate = 0, creditAmt = 0, creditNote = '–';
-  if (meta.is1H && net > 0){
+  if (is1Hjb && net > 0){
     const c = s.credit(ctx);
     creditRate = Math.min(s.capRate(), c.age + c.extra);
     if (creditRate > 0){
@@ -1690,38 +1767,60 @@ function computeOwner(ownerAssets, s, meta){
     pt: ptTotal, jb: jbFinal, total: ptTotal + jbFinal,
     items,
     jbInfo: { gaSum, threshold, taxable, ded, dedNote: s.dedNote(ctx), fmvr, jbBase,
-              rate, gross, dup, creditRate, creditAmt, creditNote, tblKey, ctx }
+              rate, gross, dup, creditRate, creditAmt, creditNote, tblKey, ctx,
+              is1Hpt, is1Hjb }
   };
 }
 
+const OWNERS = ['husband','wife','other'];
+
 function run(){
-  const { assets, houses } = collect();
+  const { assets, houseRows, houses } = collect();
   const married = $('#marriage-status').checked;
-  const ages = { husband: num($('#age-husband').value), wife: num($('#age-wife').value) };
+  const ages = { husband: num($('#age-husband').value), wife: num($('#age-wife').value),
+                 other:   num($('#age-other').value) };
 
-  const owners = { husband:{}, wife:{}, household:{} };
+  /* 세대 범위 판정.
+     '세대원(부모님 등)' 물건이 하나라도 있으면 = 세대분리 전 → 전원이 한 세대.
+     단 동거봉양 합가(10년)·혼인 합가(5년) 특례를 켜면 세대원은 별도 세대(종부령 §1의2). */
+  const hasOther  = houseRows.some(r => r.owner === 'other');
+  const otherSep  = $('#sedae-split').checked;
+  const oneSedae  = hasOther && !otherSep;
+  const sedaeRows = o => {
+    if (o === 'other') return otherSep ? houseRows.filter(r => r.owner === 'other') : houseRows;
+    if (!otherSep && hasOther) return houseRows;
+    const own = houseRows.filter(r => r.owner !== 'other');
+    return married ? own : own.filter(r => r.owner === o || r.owner === 'joint');
+  };
+
+  const owners = { husband:{}, wife:{}, other:{}, household:{} };
   const detail = [];
+  const judge  = {};
 
-  ['husband','wife'].forEach(o => {
+  OWNERS.forEach(o => {
     const mine = assets.filter(a => a.owner === o);
+    const sr   = sedaeRows(o);
+    const cntSedae = sr.length;                        // 실제 세대 주택 수
+    const cntJb    = sr.filter(r => !r.tmp).length;    // 일시적 2주택 특례 적용 후
+    judge[o] = { cntSedae, cntJb, is1Hpt: cntSedae === 1, is1Hjb: cntJb === 1,
+                 tmpUsed: cntSedae !== cntJb, mineCnt: mine.length };
     SCEN.forEach(s => {
       if (!mine.length){ owners[o][s.id] = { pt:0, jb:0, total:0, items:[], empty:true }; return; }
-      const is1H = married ? houses === 1 : mine.length === 1;
-      const r = computeOwner(mine, s, { is1H, age: ages[o] });
+      const r = computeOwner(mine, s, {
+        is1Hpt: judge[o].is1Hpt, is1Hjb: judge[o].is1Hjb, age: ages[o] });
       owners[o][s.id] = r;
       detail.push({ owner:o, scen:s.id, r });
     });
   });
 
   SCEN.forEach(s => {
-    owners.household[s.id] = {
-      pt:    (owners.husband[s.id]?.pt    || 0) + (owners.wife[s.id]?.pt    || 0),
-      jb:    (owners.husband[s.id]?.jb    || 0) + (owners.wife[s.id]?.jb    || 0),
-      total: (owners.husband[s.id]?.total || 0) + (owners.wife[s.id]?.total || 0)
-    };
+    const sum = k => OWNERS.reduce((t,o) => t + (owners[o][s.id]?.[k] || 0), 0);
+    owners.household[s.id] = { pt: sum('pt'), jb: sum('jb'), total: sum('total') };
   });
 
-  RESULT = { owners, detail, married, houses };
+  RESULT = { owners, detail, married, houses, houseRows, judge,
+             oneSedae, hasOther, otherSep, tmp: tmpDeadline(houseRows) };
+  paintSedae();
   paintHero();
   paintBars();
   paintOwnerCards();
@@ -1734,13 +1833,123 @@ function run(){
    ═══════════════════════════════════════════════════════════════════════════ */
 let activeScen = 'y28';
 
+const OWNER_LABEL = { husband:'남편', wife:'아내', other:'세대원(부모님 등)' };
+
+/* 세대 주택 수 · 1세대 1주택 판정 · 일시적 2주택 기한 */
+function paintSedae(){
+  if (!RESULT) return;
+  const { houseRows, judge, oneSedae, hasOther, otherSep, tmp, married } = RESULT;
+
+  $('#sedaeMode').textContent =
+      hasOther && otherSep ? '세대원 별도 세대 (합가 특례)'
+    : hasOther             ? '세대분리 전 — 전원 1세대'
+    : married              ? '혼인신고 — 부부 1세대' : '부부 각자 세대';
+
+  /* 명의별 물건 수 (공동명의는 물건 1채로 계산) */
+  const byOwner = { husband:0, wife:0, joint:0, other:0 };
+  houseRows.forEach(r => byOwner[r.owner]++);
+  const mix = Object.entries(byOwner).filter(([,n]) => n > 0)
+    .map(([k,n]) => `${k==='joint' ? '공동명의' : OWNER_LABEL[k]} ${n}채`).join(' · ');
+
+  /* 배너는 '본인(부부) 세대' 기준으로 보여준다 */
+  const cntSedae = Math.max(judge.husband.cntSedae, judge.wife.cntSedae);
+  const cntJb    = Math.max(judge.husband.cntJb,    judge.wife.cntJb);
+  const one = cntJb === 1;
+
+  const cards = [
+    `<div class="sd"><div class="k">내 세대 주택 수</div><div class="v">${cntSedae}채</div>
+       <div class="s">${mix || '–'}${hasOther && otherSep ? '<br><b>세대원 주택은 별도 세대로 제외</b>' : ''}</div></div>`,
+    `<div class="sd${tmp ? ' warn' : ''}"><div class="k">종부세 판정 주택 수</div>
+       <div class="v">${cntJb}채</div>
+       <div class="s">${tmp ? `일시적 2주택 특례로 <b>${tmp.nw.name}</b> 제외` : '특례 적용 없음'}</div></div>`,
+    `<div class="sd ${one ? 'ok' : 'bad'}"><div class="k">1세대 1주택자</div>
+       <div class="v">${one ? '○ 해당' : '✕ 비해당'}</div>
+       <div class="s">${one ? '기본공제 14억(거주) · 세액공제 적용'
+                            : '기본공제 4억 + 5억×거주비중 · <b>세액공제 배제</b>'}</div></div>`
+  ];
+
+  if (tmp){
+    const bad = tmp.expired;
+    cards.push(`<div class="sd ${bad ? 'bad' : 'warn'}"><div class="k">종전주택 양도기한</div>
+      <div class="v">${tmp.dueStr}</div>
+      <div class="s">${tmp.years}년 룰 · ${bad ? `<b>${-tmp.days}일 초과</b>` : `D−${tmp.days}`}</div></div>`);
+  }
+  $('#sedaeCards').innerHTML = cards.join('');
+
+  const notes = [];
+
+  if (hasOther && !otherSep){
+    notes.push(`<div class="note info"><span>👪</span><div>
+      <b>세대분리를 하지 않은 상태</b>로 계산했습니다. 종부세는 <b>인별 과세</b>라
+      세대원(부모님 등) 명의 주택의 공시가격은 <b>내 과세표준에 합산되지 않습니다</b>.
+      다만 <b>1세대 1주택 판정에서는 세대 주택 수에 포함</b>되므로,
+      세대분리만 되어 있었다면 받았을 <b>14억 공제와 세액공제를 놓치게 됩니다</b>.
+      아래 명의별 카드에서 각자의 세액을 따로 확인하세요.<br>
+      60세 이상 직계존속을 <b>동거봉양하려고 합가</b>한 경우라면 합가일부터 10년간 별도 세대로 보는
+      특례(종부령 §1의2)가 있습니다 — 시나리오 설정에서 <b>「세대원과 별도 세대로 판정」</b>을 켜서 비교해 보세요.</div></div>`);
+  }
+
+  if (hasOther && otherSep){
+    notes.push(`<div class="note info"><span>🧓</span><div>
+      <b>동거봉양 합가(10년) · 혼인 합가(5년) 특례</b>를 적용해 세대원 주택을 <b>내 세대 주택 수에서 제외</b>했습니다.
+      이 특례는 <b>따로 살다가 합친 경우</b>에만 적용되고 기간이 지나면 소멸합니다.
+      원래부터 함께 살아 주민등록만 분리하지 않은 상태라면 <b>해당하지 않으므로 이 스위치를 꺼야</b> 합니다.</div></div>`);
+  }
+
+  if (tmp){
+    const rule = tmp.grandfathered
+      ? `신규주택 취득일이 <b>2026.8.3. 이전</b>이라 경과조치로 <b>종전 3년</b>이 유지됩니다.`
+      : tmp.bothAdj
+        ? `종전·신규주택이 <b>모두 조정대상지역</b>이라 개편안 4-1에 따라 <b>3년 → 2년</b>으로 단축됩니다.`
+        : `조정대상지역 조합이 아니므로 <b>3년</b>이 그대로 적용됩니다.`;
+    notes.push(`<div class="note ${tmp.expired ? 'warn' : ''}" style="margin-top:10px"><span>⏳</span><div>
+      <b>일시적 2주택</b> — 신규주택 <b>${tmp.nw.name}</b>(취득 ${tmp.nw.date}) 기준,
+      종전주택 <b>${tmp.old.name}</b>의 양도기한은 <b>${tmp.dueStr}</b>입니다. ${rule}
+      ${tmp.expired ? '<br><b style="color:var(--red)">기한이 이미 지났습니다 — 특례가 적용되지 않는 상태로 봐야 합니다.</b>' : ''}
+      <br>단축 규정의 실제 적용은 <b>2026.10.1. 이후 조정대상지역 종전주택 양도분</b>부터이며, 2026년 중 시행령 개정 예정입니다.</div></div>`);
+    notes.push(`<div class="note warn" style="margin-top:10px"><span>⚠️</span><div>
+      <b>가장 많이 오해하는 부분</b> — 일시적 2주택 특례는 <b>주택 수에서만 빼주는 것</b>이지
+      <b>합산배제가 아닙니다</b>. 두 집의 공시가격은 <b>모두 합산</b>해서 과세표준을 계산하고,
+      거기서 1주택 공제(14억)를 빼줍니다. 그래서 "1주택자니까 14억까지 괜찮다"가 아니라
+      <b>두 집 합계가 14억을 넘으면 종부세가 나옵니다</b>.<br>
+      또한 <b>재산세</b>는 물건별 과세이고 지방세법에는 일시적 2주택 제외 규정이 없어,
+      이 계산에서는 <b>재산세 1주택 특례세율(공시 9억 이하)은 적용하지 않았습니다</b>.
+      종부세 특례와는 별개 트랙이므로 관할 지자체 확인이 필요합니다.</div></div>`);
+  }
+
+  if (hasOther && tmp && !otherSep){
+    notes.push(`<div class="note warn" style="margin-top:10px"><span>🚫</span><div>
+      부모님 집과 내 집이 <b>한 세대로 묶인 상태</b>라면 이건 <b>일시적 2주택이 아닙니다</b>.
+      일시적 2주택 특례는 <b>같은 세대가 갈아타는 과정</b>(종전주택 보유 중 신규주택 취득)에 대한 것입니다.
+      부모님과의 관계는 <b>동거봉양 합가 특례</b> 쪽을 검토하세요.</div></div>`);
+  }
+
+  if (!tmp && cntSedae === 2 && !hasOther){
+    notes.push(`<div class="note" style="margin-top:10px"><span>💡</span><div>
+      2주택 상태입니다. 갈아타기 중이라면 자산 행의
+      <b>「일시적 2주택 신규주택」</b>을 체크해 특례 적용 시 세액이 얼마나 달라지는지 비교해 보세요.</div></div>`);
+  }
+
+  $('#sedaeNotes').innerHTML = notes.join('');
+
+  /* 각 자산 행의 체크박스 옆 안내문 */
+  $$('.asset').forEach((el, i) => {
+    const n = el.querySelector('.a-tmpnote');
+    if (!n) return;
+    const r = houseRows[i];
+    n.innerHTML = !r || !r.tmp ? ''
+      : !tmp ? '종전주택이 없어 특례를 적용할 수 없습니다'
+      : `종전주택 양도기한 <b>${tmp.dueStr}</b> (${tmp.years}년 룰)`;
+  });
+}
+
 function paintHero(){
   if (!RESULT) return;
   const s  = SC[activeScen];
   const d  = RESULT.owners.household[activeScen];
   const cu = RESULT.owners.household.curr;
 
-  $('#heroLabel').textContent = `${s.name} · ${s.sub} — 가구 합산 연간 보유세`;
+  $('#heroLabel').textContent = `${s.name} · ${s.sub} — 세대 합산 연간 보유세`;
   $('#heroResult').style.setProperty('--ac', s.ac);
   animateNum($('#heroNum'), d.total, v =>
     `${Math.round(v).toLocaleString()}<span style="font-size:.4em;font-weight:700"> 만원</span>`);
@@ -1804,10 +2013,12 @@ function ownerCard(title, emoji, data, tone){
 
 function paintOwnerCards(){
   const o = RESULT.owners;
+  const has = k => SCEN.some(s => o[k][s.id] && !o[k][s.id].empty);
   $('#ownerCards').innerHTML =
     ownerCard('남편 명의', '👨', o.husband, 'blue') +
     ownerCard('아내 명의', '👩', o.wife, 'red') +
-    ownerCard('가구 합산', '🏠', o.household, 'slate');
+    (has('other') ? ownerCard('세대원 명의', '👵', o.other, 'violet') : '') +
+    ownerCard('세대 합산', '🏠', o.household, 'slate');
 }
 
 /* 상세 산출 */
@@ -1865,14 +2076,24 @@ function detailScenHTML(owner, s){
   </div>`;
 }
 
+const OWNER_STYLE = {
+  husband: { ac:'var(--blue)',   emoji:'👨 남편' },
+  wife:    { ac:'var(--red)',    emoji:'👩 아내' },
+  other:   { ac:'var(--violet)', emoji:'👵 세대원(부모님 등)' }
+};
+
 function paintDetail(){
   const box = $('#detailBox');
   let html = '';
-  ['husband','wife'].forEach(o => {
+  OWNERS.forEach(o => {
     const has = SCEN.some(s => RESULT.owners[o][s.id] && !RESULT.owners[o][s.id].empty);
     if (!has) return;
-    html += `<h4 class="h3" style="margin:22px 0 12px;padding-left:11px;border-left:4px solid ${o==='husband'?'var(--blue)':'var(--red)'}">
-      ${o==='husband'?'👨 남편':'👩 아내'} 명의 상세 명세</h4>`;
+    const st = OWNER_STYLE[o], j = RESULT.judge[o];
+    html += `<h4 class="h3" style="margin:22px 0 12px;padding-left:11px;border-left:4px solid ${st.ac}">
+      ${st.emoji} 명의 상세 명세</h4>
+      <p class="small" style="margin:-4px 0 12px">본인 소유 <b>${j.mineCnt}건</b>만 인별 합산 ·
+      세대 주택 수 <b>${j.cntSedae}채</b>${j.tmpUsed ? ` → 일시적 2주택 특례 후 <b>${j.cntJb}채</b>` : ''} →
+      <b style="color:${j.is1Hjb ? 'var(--green)' : 'var(--red)'}">1세대 1주택자 ${j.is1Hjb ? '해당' : '비해당'}</b></p>`;
     html += SCEN.map(s => detailScenHTML(o, s)).join('');
   });
   box.innerHTML = html || '<p class="small">자산을 입력하면 상세 산출 과정이 표시됩니다.</p>';
@@ -1931,7 +2152,8 @@ function synthAssets({ houses, totalMan, resMan, adj, holdY, liveY }){
 /** 조건 → 특정 시나리오 세액 */
 function quickCalc(cond, scenId){
   const assets = synthAssets(cond);
-  return computeOwner(assets, SC[scenId], { is1H: cond.houses === 1, age: cond.age });
+  const one = cond.houses === 1;
+  return computeOwner(assets, SC[scenId], { is1Hpt: one, is1Hjb: one, age: cond.age });
 }
 
 /* ── 공시가격 ↔ 시가 환산기 ── */
@@ -2532,15 +2754,17 @@ function copySummary(){
     <tr style="background:${bg};font-weight:bold"><td style="${TD}">소계</td>
       ${SCEN.map(s=>`<td style="${TD}">${fmtNum(data[s.id].total)}만</td>`).join('')}</tr>`;
   const total = `<tr style="background:#e8f1ff;font-weight:bold">
-    <td colspan="2" style="${TD}">가구 합계 총 납부액</td>
+    <td colspan="2" style="${TD}">세대 합계 총 납부액</td>
     ${SCEN.map(s=>`<td style="${TD}">${fmtNum(o.household[s.id].total)}만</td>`).join('')}</tr>`;
+  const hasOther = SCEN.some(s => o.other[s.id] && !o.other[s.id].empty);
   copyHTML(`<table style="border-collapse:collapse;font-family:sans-serif;font-size:13px">
-    ${head}${block('남편', o.husband, '#f7f9fc')}${block('아내', o.wife, '#fdf5f5')}${total}</table>`);
+    ${head}${block('남편', o.husband, '#f7f9fc')}${block('아내', o.wife, '#fdf5f5')}${
+      hasOther ? block('세대원(부모님 등)', o.other, '#f6f4fd') : ''}${total}</table>`);
 }
 
 function copyDetail(){
   if (!RESULT){ toast('먼저 시뮬레이션을 실행해주세요.'); return; }
-  const oName = { husband:'남편', wife:'아내' };
+  const oName = { husband:'남편', wife:'아내', other:'세대원' };
   const rows = [];
   RESULT.detail.forEach(({ owner, scen, r }) => {
     const s = SC[scen];
@@ -2608,6 +2832,10 @@ $('#assets').addEventListener('change', e => {
     if (e.target.value === 'Y' && !row.querySelector('.a-live').value){
       row.querySelector('.a-live').value = row.querySelector('.a-date').value;
     }
+  }
+  /* 일시적 2주택 신규주택은 하나만 지정할 수 있다 */
+  if (e.target.classList.contains('a-tmp') && e.target.checked){
+    $$('.a-tmp').forEach(c => { if (c !== e.target) c.checked = false; });
   }
 });
 
